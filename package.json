@@ -1,0 +1,22 @@
+{
+  "name": "funnytwittergame",
+  "version": "1.0.0",
+  "description": "yeah",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoseChilds/funnytwittergame.git"
+  },
+  "keywords": [
+    "twitter"
+  ],
+  "author": "RoseChilds",
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/RoseChilds/funnytwittergame/issues"
+  },
+  "homepage": "https://github.com/RoseChilds/funnytwittergame#readme"
+}
