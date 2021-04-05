@@ -30,7 +30,9 @@
       thealpha=(100-(time*2.5))/100;
       time++;
       if(time<100){
-          setTimeout(dothing, 1);
+        setTimeout(dothing, 1);
+      }else{
+        window.location.replace("play");
       }
     }
     dothing();
