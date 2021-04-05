@@ -22,7 +22,9 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "dot-emc": "^0.1.2",
     "express": "^4.17.1",
+    "path": "^0.12.7",
     "twitter": "^1.7.1"
   }
 }
