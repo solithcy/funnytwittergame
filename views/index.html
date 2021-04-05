@@ -1,3 +1,39 @@
 {{#def.include('template/head')}}
-hiya
+<script src="static/blob.js"></script>
+<script type="text/javascript">
+  $('canvas').click(function(e){
+    var x = e.clientX;
+    var y = e.clientY;
+    var coord = "x=" + x + ", y=" + y;
+    var c = this.getContext('2d');
+    var p = c.getImageData(x, y, 1, 1).data;
+    p = Array.prototype.slice.call(p);
+    if(p[3]==0){
+      return;
+    }
+    if(!blob.resize){
+      return;
+    }
+    function easeInBack (t, b, c, d) {
+      s = 1.70158;
+      return c * (t /= d) * t * ((s + 1) * t - s) + b;
+    }
+    blob.resize=false;
+    let thingy = blob.radius;
+    let togrow = window.innerWidth;
+    let time = 0;
+    if (window.innerWidth<window.innerHeight){
+      togrow=window.innerHeight;
+    }
+    function dothing(){
+      blob.radius=easeInBack(time, thingy, togrow, 100);
+      thealpha=(100-(time*2.5))/100;
+      time++;
+      if(time<100){
+          setTimeout(dothing, 1);
+      }
+    }
+    dothing();
+  });
+</script>
 {{#def.include('template/foot')}}
