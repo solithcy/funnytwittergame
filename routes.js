@@ -10,6 +10,7 @@ function staticpage(page) {
 module.exports = function(app) {
     app.set('trust proxy', true);
     app.get('/', idk.index);
+    app.get('/play', idk.play);
     app.get('*', (req, res) => {
       res.render('404');
     });
