@@ -237,9 +237,9 @@ init = function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     if(blob.resize){
-      blob.radius=window.innerHeight/3;
-      if(blob.radius>window.innerWidth/3){
-        blob.radius=window.innerWidth/3;
+      blob.radius=window.innerHeight/3.5;
+      if(blob.radius>window.innerWidth/3.5){
+        blob.radius=window.innerWidth/3.5;
       }
     }
   };
