@@ -24,7 +24,7 @@ app.engine("html", require("dot-emc").init(
     }
 ).__express);
 app.set("view engine", "html");
-app.use('/static', express.static('static'))
+app.use('/static', express.static('static'));
 routes(app);
 
 // MIDDLEWARE
