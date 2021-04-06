@@ -1,6 +1,12 @@
 body{
   margin: 0;
   font-family: system-ui;
+  height: 100%;
+  width: 100%;
+}
+html{
+  height: 100%;
+  width: 100%;
 }
 canvas {
   position: fixed;

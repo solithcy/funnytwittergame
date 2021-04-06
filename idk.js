@@ -7,3 +7,7 @@ exports.index = (req, res) => {
 exports.play = (req, res) => {
   res.render('play');
 }
+
+exports.playclassic = (req, res) => {
+  res.render('playclassic');
+}

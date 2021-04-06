@@ -77,7 +77,7 @@ class Blob {
     ctx.fillStyle = "rgba(255, 255, 255, "+thealpha+")";
     ctx.font = '40px system-ui';
 
-    var textString = "Start",
+    var textString = "start",
         textWidth = ctx.measureText(textString).width;
     ctx.fillText(textString , (canvas.width/2) - (textWidth / 2), (canvas.height/2)+10);
     requestAnimationFrame(this.render.bind(this));
@@ -219,7 +219,7 @@ class Point {
     }
   }
   get friction() {
-    return this._friction || 0.0285;
+    return this._friction || 0.0485;
   }}
 
 
