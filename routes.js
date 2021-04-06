@@ -13,6 +13,7 @@ module.exports = function(app) {
     app.get('/play', idk.play);
     app.get('/play/classic', idk.playclassic);
     app.get('*', (req, res) => {
+      res.status(404);
       res.render('404');
     });
 };
