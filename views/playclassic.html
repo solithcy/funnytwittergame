@@ -209,10 +209,10 @@ $.ajax({
             if(theround==amountofrounds){
               $(".centre").addClass("funnycentre");
               $(".centre").html(`
-                <p>You got ${score}/${amountofrounds} correct! Congrats!</p>
-                <p><a id="playagain">Play again?</a></p>
+                <p>you got ${score}/${amountofrounds} correct! congrats!</p>
+                <p><a id="playagain">play again?</a></p>
                 <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}/${amountofrounds}%20on%20https%3A//whotweeted.me%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
-                  Share on Twitter
+                  share on twitter
                 </a></p>
               `);
               $("#playagain").click(function(){
