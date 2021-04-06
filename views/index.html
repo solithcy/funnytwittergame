@@ -3,8 +3,87 @@
   body{
     background: rgb(21, 32, 43);
   }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+  }
+  .play.classic{
+
+  }
+  .play .soon{
+    height: 100%;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    color: #1DA1F2;
+    width: 50%;
+    font-size: 2.2vw;
+    font-weight: 500;
+  }
+  .soon p{
+    color: #FFFFFF;
+    font-size: 1.7vw;
+  }
+  .soon img{
+    opacity: 0.7;
+  }
+  .box{
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    background: rgb(21, 32, 43);
+    top: 0; left: 0; bottom: 0; right: 0;
+  }
+  .row{
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  @media only screen and (max-width: 750px) {
+    .play{
+      width: 100%;
+      height: 33.3%;
+    }
+    .play p{
+      font-size: 5.75vw;
+    }
+    .soon p{
+      font-size: 4.7vw;
+    }
+    .row{
+      padding:1rem;
+      height: calc(100% - 2rem);
+    }
+  }
 </style>
+<div class="row" style="">
+  <div class="play">
+    <div class="soon one">
+      <p class="content">although we try our hardest to filter out nsfw, some might creep through the cracks. be warned!</p>
+    </div>
+  </div>
+  <div class="play classic">
+    <p class="content"></p>
+  </div>
+  <div class="play">
+    <div class="soon two">
+      <p class="content"><a href="https://discord.gg/pog">discord.gg/pog</a></p>
+  </div>
+</div>
 <script src="static/blob.js"></script>
+
 <script type="text/javascript">
   $('canvas').click(function(e){
     var x = e.clientX;

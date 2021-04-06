@@ -12,6 +12,10 @@ module.exports = function(app) {
     app.get('/', idk.index);
     app.get('/play', idk.play);
     app.get('/play/classic', idk.playclassic);
+
+    app.get('/api/startgame', idk.startgame);
+    app.get('/api/tweets', idk.gettweets);
+
     app.get('*', (req, res) => {
       res.status(404);
       res.render('404');

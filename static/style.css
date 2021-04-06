@@ -12,3 +12,8 @@ canvas {
   position: fixed;
   touch-action: none;
 }
+a{
+  text-decoration: none;
+  color: #1DA1F2;
+  cursor: pointer;
+}

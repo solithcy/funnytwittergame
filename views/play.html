@@ -14,6 +14,9 @@
   .play.classic{
 
   }
+  .play .soon{
+    height: 100%;
+  }
   .play p{
     text-align: center;
     position: relative;
@@ -33,6 +36,13 @@
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
     cursor: pointer;
+  }
+  .soon p{
+    color: #FFFFFF;
+    font-size: 1.7vw;
+  }
+  .soon img{
+    opacity: 0.7;
   }
   .box{
     position: absolute;
@@ -58,18 +68,31 @@
     .play p{
       font-size: 5.75vw;
     }
+    .soon p{
+      font-size: 4.7vw;
+    }
+    .row{
+      padding:1rem;
+      height: calc(100% - 2rem);
+    }
   }
 </style>
 <div class="row" style="">
-  <div class="play soon">
-    <p></p>
+  <div class="play">
+    <div class="soon one">
+      <img class="content" draggable="false" src="static/img/twitterBlack.png" alt="">
+      <p class="content blink">coming soon</p>
+    </div>
   </div>
   <div class="play classic">
     <img class="content" draggable="false" src="static/img/twitterWhite.png" alt="">
     <p class="content">classic</p>
   </div>
-  <div class="play soon">
-    <p></p>
+  <div class="play">
+    <div class="soon two">
+      <img class="content" draggable="false" src="static/img/twitterBlack.png" alt="">
+      <p class="content blink">coming soon</p>
+    </div>
   </div>
 </div>
 <div class="box">
@@ -100,9 +123,69 @@
         }
       });
       $(".play.classic p").fadeOut(200);
+      $(".play .soon").fadeOut(200);
+    });
+  });
+  $(".play .soon.two .content").each(function( index ) {
+    $(this).click(function(){
+      const xMax = 8;
+        anime({
+          targets: '.play .two',
+          easing: 'easeInOutSine',
+          duration: 550,
+          translateX: [
+            {
+              value: xMax * -1,
+            },
+            {
+              value: xMax,
+            },
+            {
+              value: xMax/-2,
+            },
+            {
+              value: xMax/2,
+            },
+            {
+              value: 0
+            }
+          ],
+        });
+    });
+  });
+  $(".play .soon.one .content").each(function( index ) {
+    $(this).click(function(){
+      const xMax = 8;
+        anime({
+          targets: '.play .one',
+          easing: 'easeInOutSine',
+          duration: 550,
+          translateX: [
+            {
+              value: xMax * -1,
+            },
+            {
+              value: xMax,
+            },
+            {
+              value: xMax/-2,
+            },
+            {
+              value: xMax/2,
+            },
+            {
+              value: 0
+            }
+          ],
+        });
     });
   });
   $(".row").fadeOut(0);
   $(".row").fadeIn(200);
+  function blink_text() {
+    $('.blink').fadeOut(500);
+    $('.blink').fadeIn(500);
+  }
+  setInterval(blink_text, 1000);
 </script>
 {{#def.include('template/foot')}}
