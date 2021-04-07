@@ -81,7 +81,7 @@ exports.gettweetsbiden = (req, res) => {
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
   try{
-    var thetweets = getRandom(bidentweets, 30);
+    var thetweets = getRandom(bidentweets, 15);
   }catch{
     res.status(500);
     return res.send({error:500, msg:"not_enough_tweets"})
@@ -108,6 +108,7 @@ if(event.created_at){
 });
 stream.on('error', function(error) {
   console.error(error);
+  console.error("classic error");
 });
 
 var bidenstream = client.stream('statuses/filter', {track: 'biden', language: 'en', filter: 'safe'});
@@ -128,4 +129,5 @@ if(event.created_at){
 });
 bidenstream.on('error', function(error) {
   console.error(error);
+  console.error("biden error");
 });
