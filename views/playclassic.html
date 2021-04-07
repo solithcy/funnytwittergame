@@ -195,9 +195,15 @@ $.ajax({
       headers: {authentification: game},
     })
       .catch(function(err){
+        $("#loadingstatus").fadeOut(0);
+        $("#loadingstatus").fadeIn(200);
+        $("#loadingstatus").html(`there aren't enough tweets loaded.. please wait`);
         setTimeout(function(){
-          window.location.reload(0);
-        }, 500);
+          $("#loadingstatus").fadeOut(200);
+          setTimeout(function(){
+            window.location.reload(0);
+          }, 250)
+        }, 5200);
       })
       .done(function(data){
         var tweets = data.tweets;
