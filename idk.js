@@ -174,7 +174,6 @@ var catstream = catclient.stream('statuses/filter', {track: 'cat', language: 'en
       return console.error(event);
     }
     if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-      console.log(`cat tweet ${cattweets.length}`)
       cattweets.unshift(event);
       if(cattweets.length>250){
         cattweets.pop();
