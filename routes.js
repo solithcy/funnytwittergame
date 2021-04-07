@@ -14,11 +14,13 @@ module.exports = function(app) {
     app.get('/play', idk.play);
     app.get('/play/classic', idk.playclassic);
     app.get('/play/biden', idk.playbiden);
+    app.get('/play/cat', idk.playcat);
     app.get('/how', idk.how);
 
     app.get('/api/startgame', idk.startgame);
     app.get('/api/tweets', idk.gettweets);
     app.get('/api/tweets/biden', idk.gettweetsbiden);
+    app.get('/api/tweets/cat', idk.gettweetscats);
 
     app.get('*', (req, res) => {
       res.status(404);
