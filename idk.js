@@ -55,7 +55,7 @@ exports.gettweets = (req, res) => {
     var thetweets = getRandom(tweets, 30);
   }catch{
     res.status(500);
-    res.send({error:500, msg:"not_enough_tweets"})
+    return res.send({error:500, msg:"not_enough_tweets"})
   }
   delete games[theid];
   return res.send({tweets:thetweets});
