@@ -1,0 +1,397 @@
+{{#def.include('template/head')}}
+<style media="screen">
+  body{
+    background: rgb(21, 32, 43);
+    overflow:hidden;
+    user-select: none;
+  }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+    margin-top:3vw;
+    cursor: pointer;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    margin: auto;
+    color: #FFFFFF;
+    width: 50%;
+    font-size: 1.5vw;
+    font-weight: 500;
+  }
+  .row{
+    height: 100%;
+    display: none;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  small{
+    font-size: 1vw;
+  }
+  .centre p{
+    font-size: 2.5vw;
+    width: 100%;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    width: calc(100% - 3rem);
+    padding-right: 1.5rem;
+    user-select: none;
+    margin: auto;
+    padding-top: 1rem;
+  }
+  .funnycentre{
+    top: 50%;
+    transform: translateY(-50%);
+    position: relative;
+  }
+  .buffer{
+    width:0%;
+    float:left;
+  }
+  #tweetimage{
+    display:block;
+    margin:auto;
+    max-height: 20vw;
+    max-width: 50vw;
+    border-radius: 16px;
+    margin-top: 1vw;
+  }
+  .accountpfp{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+  }
+  .imagecont{
+    width:35%;
+    display: block;
+    margin: auto;
+  }
+  .overlay{
+    position:absolute;
+    width:inherit;
+    height:auto;
+  }
+  .theat{
+    color: rgb(136, 153, 166);
+  }
+  #loadingstatus{
+    cursor: revert;
+  }
+  @media only screen and (max-width: 750px) {
+    .play{
+      width: 50%;
+      height: 25%;
+      margin-top:5vw;
+    }
+    #tweetimage{
+      max-height: 40vw;
+      max-width: 70vw;
+    }
+    .imagecont{
+      width:50%;
+    }
+    .buffer{
+      width:25%;
+      height: 25%;
+    }
+    .play p{
+      font-size: 3.5vw;
+    }
+    .centre p{
+      font-size: 6vw;
+    }
+  }
+</style>
+
+<div class="row" style="">
+  <div class="centre funnycentre">
+    <div class="loadingparent" style="height:100%;">
+      <p id="loadingstatus" class=""></p>
+    </div>
+  </div>
+  <div class="play one">
+    <p></p>
+  </div>
+  <div class="play two">
+    <p></p>
+  </div>
+  <div class="buffer">
+    <p></p>
+  </div>
+  <div class="play three">
+    <p></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(".row").fadeOut(0);
+$(".play").fadeOut(0);
+$(".row").fadeIn(200);
+function blink_text() {
+  $('.blink').fadeOut(500);
+  $('.blink').fadeIn(500);
+}
+function getRandom(arr, n) {
+  var result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len)
+    throw new RangeError("getRandom: more elements taken than available");
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+function decodeHTMLEntities(text) {
+    var entities = [
+        ['amp', '&'],
+        ['apos', '\''],
+        ['#x27', '\''],
+        ['#x2F', '/'],
+        ['#39', '\''],
+        ['#47', '/'],
+        ['lt', ''],
+        ['gt', ''],
+        ['nbsp', ' '],
+        ['quot', '"']
+    ];
+
+    for (var i = 0, max = entities.length; i < max; ++i)
+        text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+
+    return text;
+}
+setTimeout(function(){
+  setInterval(blink_text, 1000);
+}, 250);
+$.ajax({
+  url: "api/startgame",
+})
+  .done(function(data){
+    var game = data.gameid;
+    $("#loadingstatus").html(``);
+    $.ajax({
+      url: "api/tweets/biden",
+      headers: {authentification: game},
+    })
+      .catch(function(err){
+        $("#loadingstatus").fadeOut(0);
+        $("#loadingstatus").fadeIn(200);
+        $("#loadingstatus").html(`there aren't enough biden tweets loaded.. please wait`);
+        setTimeout(function(){
+          $("#loadingstatus").fadeOut(200);
+          setTimeout(function(){
+            window.location.reload(0);
+          }, 250)
+        }, 5200);
+      })
+      .done(function(data){
+        var tweets = data.tweets;
+        var theround = 0;
+        var score = 0;
+        var amountofrounds = tweets.length/3;
+        function startgame(){
+          $(".row").fadeOut(200);
+          setTimeout(function(){
+            $(".centre").removeClass("funnycentre");
+            $(".play").each(function(){
+              $(this).fadeOut(0);
+            });
+            if(theround==amountofrounds){
+              $(".centre").addClass("funnycentre");
+              $(".centre").html(`
+                <p>you got ${score}/${amountofrounds} correct! congrats!</p>
+                <p><a id="playagain">play again?</a></p>
+                <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}/${amountofrounds}%20on%20https%3A//whotweeted.me%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
+                  share on twitter
+                </a></p>
+              `);
+              $("#playagain").click(function(){
+                $(".row").fadeOut(200);
+                setTimeout(function(){
+                  window.location.reload(0);
+                }, 200);
+              });
+              $(".row").fadeIn(200);
+              return;
+            }
+            var thetweets = getRandom(tweets, 3);
+            tweets = tweets.filter( function( el ) {
+              return thetweets.indexOf( el ) < 0;
+            });
+            theround++;
+            $(".centre").html(`
+            <p>“<span id='thetweet'></span>”</p>
+            <a id="tweetimageurl" href="" target="_blank"><img draggable="false" src="" id="tweetimage" alt=""></a>
+            `);
+            var typewriter = new Typewriter(document.getElementById('thetweet'), {
+              loop: false,
+              cursor: "",
+              delay: 25
+            });
+            var totype = thetweets[0].text;
+            if(thetweets[0].extended_tweet){
+              totype=thetweets[0].extended_tweet.full_text;
+            }
+            totype = totype.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+            $("#tweetimage").fadeOut(0);
+            $(".overlay").each(function(){
+              $(this).fadeOut(0);
+            });
+            $("#tweetimage").attr('src', "");
+            $("#tweetimageurl").attr('href', "");
+            if(thetweets[0].entities){
+              if(thetweets[0].entities.media){
+                $("#tweetimage").attr('src', thetweets[0].entities.media[0].media_url_https);
+                $("#tweetimageurl").attr('href', thetweets[0].entities.media[0].media_url_https);
+              }
+            }
+            thetweets[0].winner=true;
+            shuffle(thetweets);
+            typewriter.pauseFor(250).typeString(decodeHTMLEntities(totype)).callFunction(function(){
+              $("#tweetimage").fadeIn(500);
+              setTimeout(function(){
+                $(".one").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[0].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[0].user.name} <span class="theat">(@${thetweets[0].user.screen_name})</p>
+                `);
+                $(".one").fadeIn(500);
+                $(".one").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  if(thetweets[0].winner){
+                    $(".one .imagecont .overlay").attr('src', 'static/img/tick.png');
+                    $(".one .imagecont .overlay").fadeIn(500);
+                    score++;
+                  }else{
+                    $(".one .imagecont .overlay").attr('src', 'static/img/cross.png');
+                    $(".one .imagecont .overlay").fadeIn(500);
+                    if(thetweets[1].winner){
+                      $(".two .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".two .imagecont .overlay").fadeIn(500);
+                    }else{
+                      $(".three .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".three .imagecont .overlay").fadeIn(500);
+                    }
+                  }
+                  setTimeout(startgame, 500);
+                });
+                $(".two").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[1].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[1].user.name} <span class="theat">(@${thetweets[1].user.screen_name})</p>
+                `);
+                $(".two").fadeIn(500);
+                $(".two").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  if(thetweets[1].winner){
+                    $(".two .imagecont .overlay").attr('src', 'static/img/tick.png');
+                    $(".two .imagecont .overlay").fadeIn(500);
+                    score++;
+                  }else{
+                    $(".two .imagecont .overlay").attr('src', 'static/img/cross.png');
+                    $(".two .imagecont .overlay").fadeIn(500);
+                    if(thetweets[2].winner){
+                      $(".three .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".three .imagecont .overlay").fadeIn(500);
+                    }else{
+                      $(".one .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".one .imagecont .overlay").fadeIn(500);
+                    }
+                  }
+                  setTimeout(startgame, 500);
+                });
+                $(".three").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[2].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[2].user.name} <span class="theat">(@${thetweets[2].user.screen_name})</p>
+                `);
+                $(".three").fadeIn(500);
+                $(".three").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  if(thetweets[2].winner){
+                    $(".three .imagecont .overlay").attr('src', 'static/img/tick.png');
+                    $(".three .imagecont .overlay").fadeIn(500);
+                    score++;
+                  }else{
+                    $(".three .imagecont .overlay").attr('src', 'static/img/cross.png');
+                    $(".three .imagecont .overlay").fadeIn(500);
+                    if(thetweets[1].winner){
+                      $(".two .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".two .imagecont .overlay").fadeIn(500);
+                    }else{
+                      $(".one .imagecont .overlay").attr('src', 'static/img/tick.png');
+                      $(".one .imagecont .overlay").fadeIn(500);
+                    }
+                  }
+                  setTimeout(startgame, 500);
+                });
+              }, 500);
+            }).start();
+            $(".row").fadeIn(200);
+          }, 500);
+        }
+        $(".row").fadeOut(200);
+        setTimeout(function(){
+          $("#loadingstatus").html(`${amountofrounds} rounds.`);
+          $(".row").fadeIn(200);
+          setTimeout(function(){
+            $(".row").fadeOut(200);
+            setTimeout(function(){
+              $("#loadingstatus").html(`${amountofrounds} probably political tweets.`);
+              $(".row").fadeIn(200);
+              setTimeout(function(){
+                $(".row").fadeOut(200);
+                setTimeout(function(){
+                  $("#loadingstatus").html(`let's go!`);
+                  $(".row").fadeIn(200);
+                  setTimeout(function(){
+                    $(".row").fadeOut(200);
+                    $(".play").fadeIn(0);
+                    startgame();
+                  }, 600);
+                }, 300);
+              }, 600);
+            }, 300);
+          }, 600);
+        }, 800);
+      }, 0);
+  });
+</script>
+{{#def.include('template/foot')}}
