@@ -201,7 +201,7 @@ $.ajax({
       .catch(function(err){
         $("#loadingstatus").fadeOut(0);
         $("#loadingstatus").fadeIn(200);
-        $("#loadingstatus").html(`there aren't enough biden tweets loaded.. please wait`);
+        $("#loadingstatus").html(`there aren't enough biden tweets loaded.. please wait<br>currently loaded ${err.amount}/${err.needed}`);
         setTimeout(function(){
           $("#loadingstatus").fadeOut(200);
           setTimeout(function(){

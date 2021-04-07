@@ -66,7 +66,7 @@ exports.gettweets = (req, res) => {
     var thetweets = getRandom(tweets, 30);
   }catch{
     res.status(500);
-    return res.send({error:500, msg:"not_enough_tweets"})
+    return res.send({error:500, msg:"not_enough_tweets", amount:tweets.length, needed:30})
   }
   delete games[theid];
   return res.send({tweets:thetweets});
@@ -84,7 +84,7 @@ exports.gettweetsbiden = (req, res) => {
     var thetweets = getRandom(bidentweets, 15);
   }catch{
     res.status(500);
-    return res.send({error:500, msg:"not_enough_tweets"})
+    return res.send({error:500, msg:"not_enough_tweets", amount:bidentweets.length, needed:15})
   }
   delete games[theid];
   return res.send({tweets:thetweets});
