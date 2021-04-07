@@ -221,12 +221,11 @@ $.ajax({
         var theround = 0;
         var score = 0;
         var amountofrounds = tweets.length/3;
+        analytics.logEvent('game_start', {
+          id: game,
+          mode: 'biden'
+        });
         function startgame(){
-          analytics.logEvent('round_start', {
-            id: game,
-            mode: 'biden',
-            round: theround+1
-          });
           $(".row").fadeOut(200);
           setTimeout(function(){
             $(".centre").removeClass("funnycentre");
@@ -234,6 +233,12 @@ $.ajax({
               $(this).fadeOut(0);
             });
             if(theround==amountofrounds){
+              analytics.logEvent('game_end', {
+                id: game,
+                mode: 'biden',
+                score: score,
+                rounds: amountofrounds
+              });
               $(".centre").addClass("funnycentre");
               $(".centre").html(`
                 <p>you got ${score}/${amountofrounds} correct! congrats!</p>
@@ -265,6 +270,11 @@ $.ajax({
               $(".row").fadeIn(200);
               return;
             }
+            analytics.logEvent('round_start', {
+              id: game,
+              mode: 'biden',
+              round: theround+1
+            });
             var thetweets = getRandom(tweets, 3);
             tweets = tweets.filter( function( el ) {
               return thetweets.indexOf( el ) < 0;
