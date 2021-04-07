@@ -88,6 +88,13 @@
   #loadingstatus{
     cursor: revert;
   }
+  .menubox{
+    position: absolute;
+    height: 100%;
+    width: 0%;
+    background: #1DA1F2;
+    top: 0; bottom: 0; right: 0;
+  }
   @media only screen and (max-width: 750px) {
     .play{
       width: 50%;
@@ -238,10 +245,17 @@ $.ajax({
                 }, 200);
               });
               $("#mainmenu").click(function(){
-                $(".row").fadeOut(200);
-                setTimeout(function(){
-                  window.location.replace("play");
-                }, 200);
+                $("#mainmenu").unbind();
+                anime({
+                  targets: '.menubox',
+                  width: window.innerWidth,
+                  easing: 'easeInQuad',
+                  duration: 500,
+                  complete: function(anim) {
+                    $(".menubox").css("width", "100%");
+                    window.location.replace("play");
+                  }
+                });
               });
               $(".row").fadeIn(200);
               return;
@@ -401,4 +415,7 @@ $.ajax({
       }, 0);
   });
 </script>
+<div class="menubox">
+  <p></p>
+</div>
 {{#def.include('template/foot')}}
