@@ -48,6 +48,11 @@ exports.playbiden = (req, res) => {
   res.render('playbiden', {version: pjson.version});
 }
 
+exports.how = (req, res) = {
+  return res.render("how", {version: pjson.version})
+}
+
+
 exports.startgame = (req, res) => {
   var theid = uuidv4();
   games[theid] = {};
@@ -89,6 +94,7 @@ exports.gettweetsbiden = (req, res) => {
   delete games[theid];
   return res.send({tweets:thetweets});
 }
+
 
 var stream = client.stream('statuses/filter', {track: 'twitter', language: 'en', filter: 'safe'});
 stream.on('data', function(event) {
