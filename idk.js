@@ -8,8 +8,15 @@ var client = new Twitter({
   access_token_key: config.twitterauth.accesstoken,
   access_token_secret: config.twitterauth.accesstokensecret
 });
+var bidenclient = new Twitter({
+  consumer_key: config.bidenauth.apikey,
+  consumer_secret: config.bidenauth.apisecretkey,
+  access_token_key: config.bidenauth.accesstoken,
+  access_token_secret: config.bidenauth.accesstokensecret
+});
 var games = {};
 var tweets = [];
+var bidentweets = [];
 
 function getRandom(arr, n) {
   var result = new Array(n),
@@ -37,6 +44,10 @@ exports.playclassic = (req, res) => {
   res.render('playclassic', {version: pjson.version});
 }
 
+exports.playbiden = (req, res) => {
+  res.render('playbiden', {version: pjson.version});
+}
+
 exports.startgame = (req, res) => {
   var theid = uuidv4();
   games[theid] = {};
@@ -61,8 +72,25 @@ exports.gettweets = (req, res) => {
   return res.send({tweets:thetweets});
 }
 
-var stream = client.stream('statuses/filter', {track: 'twitter', language: 'en', filter: 'safe'});
+exports.gettweetsbiden = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in games)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  try{
+    var thetweets = getRandom(bidentweets, 30);
+  }catch{
+    res.status(500);
+    return res.send({error:500, msg:"not_enough_tweets"})
+  }
+  delete games[theid];
+  return res.send({tweets:thetweets});
+}
 
+var stream = client.stream('statuses/filter', {track: 'twitter', language: 'en', filter: 'safe'});
 stream.on('data', function(event) {
 if(event.created_at){
   if(event.error){
@@ -78,7 +106,26 @@ if(event.created_at){
   // return console.log(event);
 }
 });
-
 stream.on('error', function(error) {
+  console.error(error);
+});
+
+var bidenstream = client.stream('statuses/filter', {track: 'biden', language: 'en', filter: 'safe'});
+bidenstream.on('data', function(event) {
+if(event.created_at){
+  if(event.error){
+    return console.error(event);
+  }
+  if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
+    bidentweets.unshift(event);
+    if(bidentweets.length>250){
+      bidentweets.pop();
+    }
+  }
+}else{
+  // return console.log(event);
+}
+});
+bidenstream.on('error', function(error) {
   console.error(error);
 });
