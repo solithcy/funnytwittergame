@@ -85,6 +85,9 @@
   .theat{
     color: rgb(136, 153, 166);
   }
+  #loadingstatus{
+    cursor: revert;
+  }
   @media only screen and (max-width: 750px) {
     .play{
       width: 50%;
@@ -133,6 +136,7 @@
 
 <script type="text/javascript">
 $(".row").fadeOut(0);
+$(".play").fadeOut(0);
 $(".row").fadeIn(200);
 function blink_text() {
   $('.blink').fadeOut(500);
@@ -379,6 +383,7 @@ $.ajax({
                   $(".row").fadeIn(200);
                   setTimeout(function(){
                     $(".row").fadeOut(200);
+                    $(".play").fadeIn(0);
                     startgame();
                   }, 600);
                 }, 300);
