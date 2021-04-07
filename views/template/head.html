@@ -17,6 +17,19 @@ THANK YOUS:
     <script src="https://unpkg.com/typewriter-effect@2.3.1/dist/core.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-analytics.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyCO15PvxqO2b-ZmNyA_NLAmJrH82wJbZwk",
+        authDomain: "whotweeted-me.firebaseapp.com",
+        projectId: "whotweeted-me",
+        storageBucket: "whotweeted-me.appspot.com",
+        messagingSenderId: "723085680966",
+        appId: "1:723085680966:web:ebb9b63b668af116e8c547",
+        measurementId: "G-LP2ZTE2N6F"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const analytics = firebase.analytics();
+    </script>
     <link rel="stylesheet" href="/static/style.css?v=2">
     <link rel="stylesheet" href="/static/loading.css">
     <title>{{# def.title || 'Who Tweeted.me' }}</title>

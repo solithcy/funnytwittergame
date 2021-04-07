@@ -222,6 +222,11 @@ $.ajax({
         var score = 0;
         var amountofrounds = tweets.length/3;
         function startgame(){
+          analytics.logEvent('round_start', {
+            id: game,
+            mode: 'biden',
+            round: theround+1
+          });
           $(".row").fadeOut(200);
           setTimeout(function(){
             $(".centre").removeClass("funnycentre");
@@ -312,7 +317,15 @@ $.ajax({
                     $(".one .imagecont .overlay").attr('src', 'static/img/tick.png');
                     $(".one .imagecont .overlay").fadeIn(500);
                     score++;
+                    analytics.logEvent('round_correct', {
+                      id: game,
+                      mode: 'biden'
+                    });
                   }else{
+                    analytics.logEvent('round_incorrect', {
+                      id: game,
+                      mode: 'biden'
+                    });
                     $(".one .imagecont .overlay").attr('src', 'static/img/cross.png');
                     $(".one .imagecont .overlay").fadeIn(500);
                     if(thetweets[1].winner){
@@ -341,7 +354,15 @@ $.ajax({
                     $(".two .imagecont .overlay").attr('src', 'static/img/tick.png');
                     $(".two .imagecont .overlay").fadeIn(500);
                     score++;
+                    analytics.logEvent('round_correct', {
+                      id: game,
+                      mode: 'biden'
+                    });
                   }else{
+                    analytics.logEvent('round_incorrect', {
+                      id: game,
+                      mode: 'biden'
+                    });
                     $(".two .imagecont .overlay").attr('src', 'static/img/cross.png');
                     $(".two .imagecont .overlay").fadeIn(500);
                     if(thetweets[2].winner){
@@ -370,7 +391,15 @@ $.ajax({
                     $(".three .imagecont .overlay").attr('src', 'static/img/tick.png');
                     $(".three .imagecont .overlay").fadeIn(500);
                     score++;
+                    analytics.logEvent('round_correct', {
+                      id: game,
+                      mode: 'biden'
+                    });
                   }else{
+                    analytics.logEvent('round_incorrect', {
+                      id: game,
+                      mode: 'biden'
+                    });
                     $(".three .imagecont .overlay").attr('src', 'static/img/cross.png');
                     $(".three .imagecont .overlay").fadeIn(500);
                     if(thetweets[1].winner){
