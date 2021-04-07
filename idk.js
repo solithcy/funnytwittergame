@@ -51,7 +51,12 @@ exports.gettweets = (req, res) => {
   if(!(theid in games)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
-  var thetweets = getRandom(tweets, 30);
+  try{
+    var thetweets = getRandom(tweets, 30);
+  }catch{
+    res.status(500);
+    res.send({error:500, msg:"not_enough_tweets"})
+  }
   delete games[theid];
   return res.send({tweets:thetweets});
 }

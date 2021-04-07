@@ -194,6 +194,9 @@ $.ajax({
       url: "api/tweets",
       headers: {authentification: game},
     })
+      .catch(function(err){
+        window.location.reload(0);
+      })
       .done(function(data){
         var tweets = data.tweets;
         var theround = 0;
