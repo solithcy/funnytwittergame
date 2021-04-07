@@ -167,7 +167,7 @@ bidenstream.on('error', function(error) {
   console.error("biden error");
 });
 
-var catstream = catclient.stream('statuses/filter', {track: 'cat has:media', language: 'en', filter: 'safe'});
+var catstream = catclient.stream('statuses/filter', {track: 'cat', language: 'en', filter: 'safe'});
   catstream.on('data', function(event) {
   if(event.created_at){
     if(event.error){

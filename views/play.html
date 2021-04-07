@@ -49,13 +49,19 @@
     width: 0%;
     height: 100%;
     background: rgb(21, 32, 43);
-    top: 0; left: 0; bottom: 0; right: 0;
+    top: 0; bottom: 0; right: 0;
+  }
+  .left0{
+     left: 0;
   }
   .row{
     height: 100%;
     display: none;
   }
   .one p{
+    color: white;
+  }
+  .two p{
     color: white;
   }
   .row:after {
@@ -89,14 +95,12 @@
     <img class="content" draggable="false" src="static/img/twitterWhite.png" alt="">
     <p class="content">classic</p>
   </div>
-  <div class="play">
-    <div class="soon two">
-      <img class="content" draggable="false" src="static/img/twitterBlack.png" alt="">
-      <p class="content blink">coming soon</p>
-    </div>
+  <div class="play two">
+    <img class="content" id="cattweet" draggable="false" src="static/img/twitterCat.png" alt="">
+    <p class="content">cat</p>
   </div>
 </div>
-<div class="box">
+<div class="box left0">
   <p></p>
 </div>
 <script type="text/javascript">
@@ -125,34 +129,50 @@
       });
       $(".play.classic p").fadeOut(200);
       $(".play.one .content").fadeOut(200);
-      $(".play .two").fadeOut(200);
+      $(".play.two").fadeOut(200);
     });
   });
-  $(".play .soon.two .content").each(function( index ) {
+  $(".play.two .content").each(function( index ) {
     $(this).click(function(){
-      const xMax = 8;
-      anime({
-        targets: '.play .two',
-        easing: 'easeInOutSine',
-        duration: 550,
-        translateX: [
-          {
-            value: xMax * -1,
-          },
-          {
-            value: xMax,
-          },
-          {
-            value: xMax/-2,
-          },
-          {
-            value: xMax/2,
-          },
-          {
-            value: 0
-          }
-        ],
+      $(".play .content").each(function( index ) {
+        $(this).unbind();
       });
+      $(".play.three .content").fadeOut(200);
+      $(".play.one .content").fadeOut(200);
+      $(".play.two p").fadeOut(200);
+      function easeInOutQuad (t, b, c, d) {
+        if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+        return -c / 2 * ((--t) * (t - 2) - 1) + b;
+      }
+      var time = 0;
+      function spinningcat(){
+        $("#cattweet").css({'transform' : 'rotate('+ easeInOutQuad(time, 0, -360*4, 500) +'deg)'});
+        time++;
+        if(time<500){
+          setTimeout(spinningcat, 1);
+        }
+      }
+      spinningcat();
+      anime({
+        targets: '.play.two',
+        translateX: -window.innerWidth,
+        easing: 'easeInBack',
+        complete: function(anim) {
+          $(".play.two img").css('display', 'none');
+        }
+      });
+      $(".box").removeClass("left0");
+      setTimeout(function(){
+        anime({
+          targets: '.box',
+          width: window.innerWidth,
+          easing: 'easeInBack',
+          complete: function(anim) {
+            $(".box").css("width", "100%");
+            window.location.replace("play/cat");
+          }
+        });
+      }, 50);
     });
   });
   $(".play.one .content").each(function( index ) {
@@ -161,7 +181,7 @@
         $(this).unbind();
       });
       $(".play.three").fadeOut(200);
-      $(".play .two").fadeOut(200);
+      $(".play.two").fadeOut(200);
       $(".play.one p").fadeOut(200);
       function easeInOutQuad (t, b, c, d) {
         if ((t /= d / 2) < 1) return c / 2 * t * t + b;
@@ -170,7 +190,6 @@
       var time = 0;
       function dothing(){
         $("#bidentweet").css({'transform' : 'rotate('+ easeInOutQuad(time, 0, 90, 50) +'deg)'});
-        thealpha=(100-(time*2.5))/100;
         time++;
         if(time<50){
           setTimeout(dothing, 1);
