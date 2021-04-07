@@ -14,6 +14,7 @@ module.exports = function(app) {
     app.get('/play', idk.play);
     app.get('/play/classic', idk.playclassic);
     app.get('/play/biden', idk.playbiden);
+    app.get('/how', idk.how);
 
     app.get('/api/startgame', idk.startgame);
     app.get('/api/tweets', idk.gettweets);
