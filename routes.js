@@ -1,5 +1,6 @@
 const config = require('./config.json');
-const idk = require('./idk')
+const idk = require('./idk');
+const pjson = require('./package.json');
 
 function staticpage(page) {
     return function(req, res) {
@@ -18,6 +19,6 @@ module.exports = function(app) {
 
     app.get('*', (req, res) => {
       res.status(404);
-      res.render('404');
+      res.render('404', {version: pjson.version});
     });
 };
