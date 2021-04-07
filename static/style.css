@@ -3,6 +3,8 @@ body{
   font-family: system-ui;
   height: 100%;
   width: 100%;
+  background: rgb(21, 32, 43);
+  color: #FFFFFF;
 }
 html{
   height: 100%;
