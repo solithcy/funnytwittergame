@@ -1,0 +1,122 @@
+{{#def.include('template/head')}}
+<style media="screen">
+  body{
+    background: #1DA1F2;
+  }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+  }
+  .play.classic{
+
+  }
+  .play .soon{
+    height: 100%;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    color: white;
+    width: 50%;
+    font-size: 2.2vw;
+    font-weight: 500;
+  }
+  .soon p{
+    color: #FFFFFF;
+    font-size: 1.7vw;
+  }
+  .soon img{
+    opacity: 0.7;
+  }
+  .box{
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    background: rgb(21, 32, 43);
+    top: 0; left: 0; bottom: 0; right: 0;
+  }
+  .row{
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 3vw;
+    display: none;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .content{
+    padding-left: 1vw;
+    padding-right: 1vw;
+  }
+  .soon .content{
+    padding-left:17vw;
+    padding-right:17vw;
+  }
+  .box{
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    background: rgb(21, 32, 43);
+    top: 0; left: 0; bottom: 0; right: 0;
+  }
+  @media only screen and (max-width: 965px) {
+    .play{
+      width: 100%;
+      height: 33.3%;
+    }
+    .soon .content{
+      padding-left:5vw;
+      padding-right:5vw;
+    }
+    .play p{
+      font-size: 2.5vw;
+    }
+    .soon p{
+      font-size: 3.7vw;
+    }
+    .row{
+      height: calc(100% - 2rem);
+      font-size: 6vw;
+    }
+  }
+</style>
+<div class="row" style="">
+  <p class="content"><b>how to play this really cool and fun game:</b></p>
+  <div class="soon one">
+    <p class="content">
+      it's actually really easy! to begin with, just select a gamemode. when it's loaded, just read the tweet that's typed onto the screen, and click the profile you think made it!
+      <br>
+      cool, right? <a id="tryit" style="color:#FFFFFF"><u>try it</u></a> on classic mode!
+    </p>
+  </div>
+</div>
+<div class="box">
+  <p></p>
+</div>
+<script type="text/javascript">
+  $(".row").fadeIn(200);
+  $("#tryit").click(function(){
+    $("#tryit").unbind();
+    anime({
+      targets: '.box',
+      width: window.innerWidth,
+      easing: 'easeInQuad',
+      duration: 500,
+      complete: function(anim) {
+        $(".box").css("width", "100%");
+        window.location.replace("play/classic");
+      }
+    });
+  });
+</script>
+{{#def.include('template/foot')}}

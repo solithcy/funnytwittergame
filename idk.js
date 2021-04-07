@@ -49,7 +49,7 @@ exports.playbiden = (req, res) => {
 }
 
 exports.how = (req, res) => {
-  return res.render("how", {version: pjson.version})
+  return res.render("how", {version: pjson.version, onhow:true})
 }
 
 

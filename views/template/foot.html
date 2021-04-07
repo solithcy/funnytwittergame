@@ -11,13 +11,40 @@
     z-index: 100;
     font-size: 1rem;
   }
+  .howbox{
+    position: absolute;
+    width: 100%;
+    height: 0%;
+    background: #1DA1F2;
+    left: 0; bottom: 0; right: 0;
+  }
 </style>
+<div class="howbox">
+  <p></p>
+</div>
 <p class="footertext">
   v{{=it.version || '1.something'}}
   <br>
   Rose Childs
-  <br>
-  <a href="how" style="color:white;" target="_self"><u>how to play</u></a>
+  {{?!it.onhow}}
+    <br>
+    <a style="color:white;" id="howtext"><u>how to play</u></a>
+  {{?}}
 </p>
+<script type="text/javascript">
+  $("#howtext").click(function(){
+    $("#howtext").unbind();
+    anime({
+      targets: '.howbox',
+      height: window.innerHeight,
+      easing: 'easeInQuad',
+      duration: 400,
+      complete: function(anim) {
+        $(".box").css("height", "100%");
+        window.location.replace("how");
+      }
+    });
+  });
+</script>
 </body>
 </html>
