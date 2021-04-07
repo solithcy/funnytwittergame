@@ -55,6 +55,9 @@
     height: 100%;
     display: none;
   }
+  .one p{
+    color: white;
+  }
   .row:after {
     content: "";
     display: table;
@@ -78,13 +81,11 @@
   }
 </style>
 <div class="row" style="">
-  <div class="play">
-    <div class="soon one">
-      <img class="content" draggable="false" src="static/img/twitterBlack.png" alt="">
-      <p class="content blink">coming soon</p>
-    </div>
+  <div class="play one">
+    <img class="content" id="bidentweet" draggable="false" src="static/img/twitterBiden.png" alt="" style>
+    <p class="content">biden</p>
   </div>
-  <div class="play classic">
+  <div class="play classic three">
     <img class="content" draggable="false" src="static/img/twitterWhite.png" alt="">
     <p class="content">classic</p>
   </div>
@@ -123,61 +124,78 @@
         }
       });
       $(".play.classic p").fadeOut(200);
-      $(".play .soon").fadeOut(200);
+      $(".play .one").fadeOut(200);
+      $(".play .two").fadeOut(200);
     });
   });
   $(".play .soon.two .content").each(function( index ) {
     $(this).click(function(){
       const xMax = 8;
-        anime({
-          targets: '.play .two',
-          easing: 'easeInOutSine',
-          duration: 550,
-          translateX: [
-            {
-              value: xMax * -1,
-            },
-            {
-              value: xMax,
-            },
-            {
-              value: xMax/-2,
-            },
-            {
-              value: xMax/2,
-            },
-            {
-              value: 0
-            }
-          ],
-        });
+      anime({
+        targets: '.play .two',
+        easing: 'easeInOutSine',
+        duration: 550,
+        translateX: [
+          {
+            value: xMax * -1,
+          },
+          {
+            value: xMax,
+          },
+          {
+            value: xMax/-2,
+          },
+          {
+            value: xMax/2,
+          },
+          {
+            value: 0
+          }
+        ],
+      });
     });
   });
-  $(".play .soon.one .content").each(function( index ) {
+  $(".play.one .content").each(function( index ) {
     $(this).click(function(){
-      const xMax = 8;
+      $(".play .content").each(function( index ) {
+        $(this).unbind();
+      });
+      $(".play.three").fadeOut(200);
+      $(".play .two").fadeOut(200);
+      $(".play.one p").fadeOut(200);
+      function easeInOutQuad (t, b, c, d) {
+        if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+        return -c / 2 * ((--t) * (t - 2) - 1) + b;
+      }
+      var time = 0;
+      function dothing(){
+        $("#bidentweet").css({'transform' : 'rotate('+ easeInOutQuad(time, 0, 90, 50) +'deg)'});
+        thealpha=(100-(time*2.5))/100;
+        time++;
+        if(time<50){
+          setTimeout(dothing, 1);
+        }
+      }
+      dothing();
+      anime({
+        targets: '.play.one',
+        easing: 'easeInBack',
+        duration: 600,
+        translateY: window.innerHeight,
+      });
+      $(".box").css("width", "100%");
+      $(".box").css("height", "0%");
+      setTimeout(function(){
         anime({
-          targets: '.play .one',
-          easing: 'easeInOutSine',
-          duration: 550,
-          translateX: [
-            {
-              value: xMax * -1,
-            },
-            {
-              value: xMax,
-            },
-            {
-              value: xMax/-2,
-            },
-            {
-              value: xMax/2,
-            },
-            {
-              value: 0
-            }
-          ],
+          targets: '.box',
+          height: window.innerHeight,
+          easing: 'easeInOutQuad',
+          complete: function(anim) {
+            $(".box").css("height", "100%");
+            window.location.replace("play/biden");
+          }
         });
+      }, 400);
     });
   });
   $(".row").fadeOut(0);
