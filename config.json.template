@@ -6,5 +6,12 @@
     "bearertoken": "AAAA-abc123",
     "accesstoken": "123-abc",
     "accesstokensecret": "abc123"
+  },
+  "bidenauth": {
+    "apikey": "abc123",
+    "apisecretkey": "abc123",
+    "bearertoken": "AAAA-abc123",
+    "accesstoken": "123-abc",
+    "accesstokensecret": "abc123"
   }
 }
