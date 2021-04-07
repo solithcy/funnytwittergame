@@ -48,7 +48,7 @@ exports.playbiden = (req, res) => {
   res.render('playbiden', {version: pjson.version});
 }
 
-exports.how = (req, res) = {
+exports.how = (req, res) => {
   return res.render("how", {version: pjson.version})
 }
 
