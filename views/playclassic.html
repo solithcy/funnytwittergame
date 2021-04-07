@@ -229,11 +229,18 @@ $.ajax({
                 <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}/${amountofrounds}%20on%20https%3A//whotweeted.me%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
                   share on twitter
                 </a></p>
+                <p><a id="mainmenu">main menu</a></p>
               `);
               $("#playagain").click(function(){
                 $(".row").fadeOut(200);
                 setTimeout(function(){
                   window.location.reload(0);
+                }, 200);
+              });
+              $("#mainmenu").click(function(){
+                $(".row").fadeOut(200);
+                setTimeout(function(){
+                  window.location.replace("play");
                 }, 200);
               });
               $(".row").fadeIn(200);
