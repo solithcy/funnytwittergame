@@ -1,5 +1,6 @@
 const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
+const pjson = require('./package.json');
 var Twitter = require('twitter');
 var client = new Twitter({
   consumer_key: config.twitterauth.apikey,
@@ -25,15 +26,15 @@ function getRandom(arr, n) {
 }
 
 exports.index = (req, res) => {
-  res.render('index');
+  res.render('index', {version: pjson.version});
 }
 
 exports.play = (req, res) => {
-  res.render('play');
+  res.render('play', {version: pjson.version});
 }
 
 exports.playclassic = (req, res) => {
-  res.render('playclassic');
+  res.render('playclassic', {version: pjson.version});
 }
 
 exports.startgame = (req, res) => {
