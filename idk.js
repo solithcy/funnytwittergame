@@ -14,9 +14,16 @@ var bidenclient = new Twitter({
   access_token_key: config.bidenauth.accesstoken,
   access_token_secret: config.bidenauth.accesstokensecret
 });
+var catclient = new Twitter({
+  consumer_key: config.catauth.apikey,
+  consumer_secret: config.catauth.apisecretkey,
+  access_token_key: config.catauth.accesstoken,
+  access_token_secret: config.catauth.accesstokensecret
+});
 var games = {};
 var tweets = [];
 var bidentweets = [];
+var cattweets = [];
 
 function getRandom(arr, n) {
   var result = new Array(n),
@@ -46,6 +53,10 @@ exports.playclassic = (req, res) => {
 
 exports.playbiden = (req, res) => {
   res.render('playbiden', {version: pjson.version});
+}
+
+exports.playcat = (req, res) => {
+  res.render('playcat', {version: pjson.version});
 }
 
 exports.how = (req, res) => {
@@ -95,8 +106,26 @@ exports.gettweetsbiden = (req, res) => {
   return res.send({tweets:thetweets});
 }
 
+exports.gettweetscats = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in games)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  try{
+    var thetweets = getRandom(cattweets, 15);
+  }catch{
+    res.status(500);
+    return res.send({error:500, msg:"not_enough_tweets", amount:cattweets.length, needed:15})
+  }
+  delete games[theid];
+  return res.send({tweets:thetweets});
+}
 
-var stream = client.stream('statuses/filter', {track: 'twitter', language: 'en', filter: 'safe'});
+
+var stream = client.stream('statuses/filter', {track: 'twitter -is:retweet -is:quote', language: 'en', filter: 'safe'});
 stream.on('data', function(event) {
 if(event.created_at){
   if(event.error){
@@ -117,7 +146,7 @@ stream.on('error', function(error) {
   console.error("classic error");
 });
 
-var bidenstream = client.stream('statuses/filter', {track: 'biden', language: 'en', filter: 'safe'});
+var bidenstream = bidenclient.stream('statuses/filter', {track: 'biden -is:retweet -is:quote', language: 'en', filter: 'safe'});
 bidenstream.on('data', function(event) {
 if(event.created_at){
   if(event.error){
@@ -136,4 +165,26 @@ if(event.created_at){
 bidenstream.on('error', function(error) {
   console.error(error);
   console.error("biden error");
+});
+
+var catstream = catclient.stream('statuses/filter', {track: 'cat', language: 'en', filter: 'safe'});
+  catstream.on('data', function(event) {
+  if(event.created_at){
+    if(event.error){
+      return console.error(event);
+    }
+    if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
+      console.log(`cat tweet ${cattweets.length}`)
+      cattweets.unshift(event);
+      if(cattweets.length>250){
+        cattweets.pop();
+      }
+    }
+  }else{
+    // return console.log(event);
+  }
+});
+catstream.on('error', function(error) {
+  console.error(error);
+  console.error("cat error");
 });
