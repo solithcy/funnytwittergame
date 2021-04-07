@@ -195,7 +195,9 @@ $.ajax({
       headers: {authentification: game},
     })
       .catch(function(err){
-        window.location.reload(0);
+        setTimeout(function(){
+          window.location.reload(0);
+        }, 500);
       })
       .done(function(data){
         var tweets = data.tweets;
