@@ -125,7 +125,7 @@ exports.gettweetscats = (req, res) => {
 }
 
 
-var stream = client.stream('statuses/filter', {track: 'twitter -is:retweet -is:quote', language: 'en', filter: 'safe'});
+var stream = client.stream('statuses/filter', {track: 'twitter', language: 'en', filter: 'safe'});
 stream.on('data', function(event) {
 if(event.created_at){
   if(event.error){
@@ -146,7 +146,7 @@ stream.on('error', function(error) {
   console.error("classic error");
 });
 
-var bidenstream = bidenclient.stream('statuses/filter', {track: 'biden -is:retweet -is:quote', language: 'en', filter: 'safe'});
+var bidenstream = bidenclient.stream('statuses/filter', {track: 'biden', language: 'en', filter: 'safe'});
 bidenstream.on('data', function(event) {
 if(event.created_at){
   if(event.error){
