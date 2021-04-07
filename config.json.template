@@ -14,7 +14,7 @@
     "accesstoken": "123-abc",
     "accesstokensecret": "abc123"
   },
-  "verifiedauth": {
+  "catauth": {
     "apikey": "abc123",
     "apisecretkey": "abc123",
     "bearertoken": "AAAA-abc123",
