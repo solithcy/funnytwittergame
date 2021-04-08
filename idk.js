@@ -1,6 +1,12 @@
 const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
+const twitterlogin = require('login-with-twitter');
+const tw = new LoginWithTwitter({
+  consumerKey: config.loginauth.apikey,
+  consumerSecret: config.loginauth.apisecretkey,
+  callbackUrl: 'https://whotweeted.me/login'
+});
 var Twitter = require('twitter');
 var client = new Twitter({
   consumer_key: config.twitterauth.apikey,
@@ -63,6 +69,34 @@ exports.how = (req, res) => {
   return res.render("how", {version: pjson.version, onhow:true})
 }
 
+exports.login = (req, res) => {
+  if(req.query.oauth_token&&req.query.oauth_verifier){
+    app.get('/twitter/callback', (req, res) => {
+    tw.callback({
+      oauth_token: req.query.oauth_token,
+      oauth_verifier: req.query.oauth_verifier
+    }, req.session.tokenSecret, (err, user) => {
+      if (err) {
+        return res.redirect('/login');
+      }
+      delete req.session.tokenSecret;
+      var toredirect = req.session.redirect || '/';
+      delete  req.session.redirect;
+      req.session.user = user;
+      res.redirecttoredirect
+      });
+    });
+  }else{
+    tw.login((err, tokenSecret, url) => {
+      if (err) {
+        return res.redirect('/');
+      }
+      req.session.tokenSecret = tokenSecret;
+      req.session.redirect = req.query.redirect || undefined;
+      res.redirect(url);
+    });
+  }
+}
 
 exports.startgame = (req, res) => {
   var theid = uuidv4();
