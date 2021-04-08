@@ -2,7 +2,7 @@ const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
 const twitterlogin = require('login-with-twitter');
-const tw = new LoginWithTwitter({
+const tw = new twitterlogin({
   consumerKey: config.loginauth.apikey,
   consumerSecret: config.loginauth.apisecretkey,
   callbackUrl: 'https://whotweeted.me/login'
