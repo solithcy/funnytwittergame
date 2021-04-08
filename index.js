@@ -24,6 +24,13 @@ app.engine("html", require("dot-emc").init(
     }
 ).__express);
 app.set("view engine", "html");
+app.set('trust proxy', 1)
+app.use(session({
+  secret: config.cookiesecret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 app.use('/static', express.static('static'));
 routes(app);
 
