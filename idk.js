@@ -82,7 +82,8 @@ exports.login = (req, res) => {
       var toredirect = req.session.redirect || '/';
       delete  req.session.redirect;
       req.session.user = user;
-      res.redirecttoredirect
+      console.log(user);
+      res.redirect(toredirect);
     });
   }else{
     tw.login((err, tokenSecret, url) => {
