@@ -2,6 +2,7 @@ const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
 const twitterlogin = require('login-with-twitter');
+var sqlite3 = require('sqlite3').verbose();
 const tw = new twitterlogin({
   consumerKey: config.loginauth.apikey,
   consumerSecret: config.loginauth.apisecretkey,
@@ -27,6 +28,7 @@ var catclient = new Twitter({
   access_token_secret: config.catauth.accesstokensecret
 });
 var games = {};
+var endlessgames = {};
 var tweets = [];
 var bidentweets = [];
 var cattweets = [];
@@ -69,6 +71,22 @@ exports.how = (req, res) => {
   return res.render("how", {version: pjson.version, onhow:true})
 }
 
+exports.playendless = (req, res) => {
+  if(req.session.user){
+    return res.render("playendless", {version:pjson.version});
+  }
+  return res.render("needslogin", {version:pjson.version});
+}
+
+exports.getleaderboard = (req, res) => {
+  var db = new sqlite3.Database('data.db');
+  db.serialize(function() {
+    db.all("SELECT * FROM leaderboard ORDER BY score desc, time desc LIMIT 15", function(err, data){
+      return res.send({leaderboard:data});
+    });
+  });
+}
+
 exports.login = (req, res) => {
   if(req.query.oauth_token&&req.query.oauth_verifier){
     tw.callback({
@@ -80,9 +98,8 @@ exports.login = (req, res) => {
       }
       delete req.session.tokenSecret;
       var toredirect = req.session.redirect || '/';
-      delete  req.session.redirect;
+      delete req.session.redirect;
       req.session.user = user;
-      console.log(user);
       res.redirect(toredirect);
     });
   }else{
@@ -91,7 +108,9 @@ exports.login = (req, res) => {
         return res.redirect('/');
       }
       req.session.tokenSecret = tokenSecret;
-      req.session.redirect = req.query.redirect || undefined;
+      if(req.query.redirect){
+        req.session.redirect = decodeURIComponent(req.query.redirect);
+      }
       res.redirect(url);
     });
   }
@@ -99,7 +118,12 @@ exports.login = (req, res) => {
 
 exports.startgame = (req, res) => {
   var theid = uuidv4();
-  games[theid] = {};
+  if(req.query.endless){
+    endlessgames[theid] = {score:0, time:new Date.getTime()};
+  }
+  else{
+    games[theid] = {};
+  }
   return res.send({gameid: theid});
 }
 
@@ -119,6 +143,55 @@ exports.gettweets = (req, res) => {
   }
   delete games[theid];
   return res.send({tweets:thetweets});
+}
+
+exports.gettweetsendless = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in endlessgames)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  if(endlessgames[theid].currenttweets){
+    res.send({tweets:endlessgames[theid].currenttweets});
+    return;
+  }
+  try{
+    var thetweets = getRandom(tweets, 3);
+  }catch{
+    res.status(500);
+    return res.send({error:500, msg:"not_enough_tweets", amount:tweets.length, needed:30})
+  }
+  res.send({tweets:thetweets});
+  endlessgames[theid].currenttweets = thetweets;
+}
+
+exports.endlessguess = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in endlessgames)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  if(!req.headers.tweetid){
+    return res.send({error:401, msg:"tweet_not_given"});
+  }
+  if(req.headers.tweetid == endlessgames[theid].currenttweets[0].id_str){
+    endlessgames[theid].score++;
+    delete endlessgames[theid].currenttweets;
+    return res.send({correct:true, score:endlessgames[theid].score});
+  }else{
+    res.send({correct:false, score:endlessgames[theid].score});
+    var db = new sqlite3.Database('data.db');
+    //
+    db.serialize(function() {
+      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, endlessgames[theid].time-new Date().getTime()], function(data){
+        delete endlessgames[theid];
+      });
+    });
+  }
 }
 
 exports.gettweetsbiden = (req, res) => {

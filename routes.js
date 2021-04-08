@@ -15,6 +15,7 @@ module.exports = function(app) {
     app.get('/play/classic', idk.playclassic);
     app.get('/play/biden', idk.playbiden);
     app.get('/play/cat', idk.playcat);
+    app.get('/play/endless', idk.playendless);
     app.get('/how', idk.how);
     app.get('/login', idk.login);
 
@@ -22,6 +23,9 @@ module.exports = function(app) {
     app.get('/api/tweets', idk.gettweets);
     app.get('/api/tweets/biden', idk.gettweetsbiden);
     app.get('/api/tweets/cat', idk.gettweetscats);
+    app.get('/api/tweets/endless', idk.gettweetsendless);
+    app.get('/api/endless/guess', idk.endlessguess);
+    app.get('/api/endless/leaderboard', idk.getleaderboard);
 
     app.get('*', (req, res) => {
       res.status(404);

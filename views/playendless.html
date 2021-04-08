@@ -1,0 +1,513 @@
+{{#def.include('template/head')}}
+<style media="screen">
+  body{
+    background: rgb(21, 32, 43);
+    overflow:hidden;
+    user-select: none;
+  }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+    margin-top:3vw;
+    cursor: pointer;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    margin: auto;
+    color: #FFFFFF;
+    width: 50%;
+    font-size: 1.5vw;
+    font-weight: 500;
+  }
+  .row{
+    height: 100%;
+    display: none;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  small{
+    font-size: 2vw;
+  }
+  .centre p{
+    font-size: 2.5vw;
+    width: 100%;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    width: calc(100% - 3rem);
+    padding-right: 1.5rem;
+    user-select: none;
+    margin: auto;
+    padding-top: 1rem;
+  }
+  .funnycentre{
+    top: 50%;
+    transform: translateY(-50%);
+    position: relative;
+  }
+  .buffer{
+    width:0%;
+    float:left;
+  }
+  #tweetimage{
+    display:block;
+    margin:auto;
+    max-height: 20vw;
+    max-width: 50vw;
+    border-radius: 16px;
+    margin-top: 1vw;
+  }
+  .accountpfp{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+  }
+  .imagecont{
+    width:35%;
+    display: block;
+    margin: auto;
+  }
+  .overlay{
+    position:absolute;
+    width:inherit;
+    height:auto;
+  }
+  .theat{
+    color: rgb(136, 153, 166);
+  }
+  #loadingstatus{
+    cursor: revert;
+  }
+  .menubox{
+    position: absolute;
+    height: 100%;
+    width: 0%;
+    background: #1DA1F2;
+    top: 0; bottom: 0; right: 0;
+  }
+  @media only screen and (max-width: 750px) {
+    .play{
+      width: 50%;
+      height: 25%;
+      margin-top:5vw;
+    }
+    #tweetimage{
+      max-height: 40vw;
+      max-width: 70vw;
+    }
+    .imagecont{
+      width:50%;
+    }
+    .buffer{
+      width:25%;
+      height: 25%;
+    }
+    .play p{
+      font-size: 3.5vw;
+    }
+    .centre p{
+      font-size: 6vw;
+    }
+    small{
+      font-size: 4.5vw;
+    }
+  }
+</style>
+
+<div class="row" style="">
+  <div class="centre funnycentre">
+    <div class="loadingparent" style="height:100%;">
+      <p id="loadingstatus" class=""></p>
+    </div>
+  </div>
+  <div class="play one">
+    <p></p>
+  </div>
+  <div class="play two">
+    <p></p>
+  </div>
+  <div class="buffer">
+    <p></p>
+  </div>
+  <div class="play three">
+    <p></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(".row").fadeOut(0);
+$(".play").fadeOut(0);
+$(".row").fadeIn(200);
+function blink_text() {
+  $('.blink').fadeOut(500);
+  $('.blink').fadeIn(500);
+}
+function getRandom(arr, n) {
+  var result = new Array(n),
+    len = arr.length,
+    taken = new Array(len);
+  if (n > len)
+    throw new RangeError("getRandom: more elements taken than available");
+  while (n--) {
+    var x = Math.floor(Math.random() * len);
+    result[n] = arr[x in taken ? taken[x] : x];
+    taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
+}
+function decodeHTMLEntities(text) {
+    var entities = [
+        ['amp', '&'],
+        ['apos', '\''],
+        ['#x27', '\''],
+        ['#x2F', '/'],
+        ['#39', '\''],
+        ['#47', '/'],
+        ['lt', ''],
+        ['gt', ''],
+        ['nbsp', ' '],
+        ['quot', '"']
+    ];
+
+    for (var i = 0, max = entities.length; i < max; ++i)
+        text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+
+    return text;
+}
+setTimeout(function(){
+  setInterval(blink_text, 1000);
+}, 250);
+$.ajax({
+  url: "api/startgame?endless=true",
+})
+  .done(function(data){
+    async function getTweets(){
+      const response = await fetch("api/tweets/endless", {headers: {authentification: game}});
+      return response.json();
+    }
+    var game = data.gameid;
+    $("#loadingstatus").html(``);
+    var theround = 0;
+    var score = 0;
+    analytics.logEvent('game_start', {
+      id: game,
+      mode: 'endless'
+    });
+    function startgame(){
+      $(".row").fadeOut(200);
+      setTimeout(function(){
+        $(".centre").removeClass("funnycentre");
+        $(".play").each(function(){
+          $(this).fadeOut(0);
+        });
+        if(theround==null){
+          analytics.logEvent('game_end', {
+            id: game,
+            mode: 'endless',
+            score: score
+          });
+          $(".centre").addClass("funnycentre");
+          $(".centre").html(`
+            <p>you got ${score}/${amountofrounds} correct! congrats!</p>
+            <p><a id="playagain">play again?</a></p>
+            <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}/${amountofrounds}%20on%20https%3A//whotweeted.me%20in%20endless%20mode%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
+              share on twitter
+            </a></p>
+            <p><a id="mainmenu">main menu</a></p>
+          `);
+          $("#playagain").click(function(){
+            $(".row").fadeOut(200);
+            setTimeout(function(){
+              window.location.reload(0);
+            }, 200);
+          });
+          $("#mainmenu").click(function(){
+            $("#mainmenu").unbind();
+            anime({
+              targets: '.menubox',
+              width: window.innerWidth,
+              easing: 'easeInQuad',
+              duration: 500,
+              complete: function(anim) {
+                $(".menubox").css("width", "100%");
+                window.location.replace("play");
+              }
+            });
+          });
+          $(".row").fadeIn(200);
+          return;
+        }
+        analytics.logEvent('round_start', {
+          id: game,
+          mode: 'endless',
+          round: theround+1
+        });
+        getTweets()
+          .then(data=>{
+            var thetweets = data.tweets;
+            theround++;
+            $(".centre").html(`
+            <p>“<span id='thetweet'></span>”</p>
+            <a id="tweetimageurl" href="" target="_blank"><img draggable="false" src="" id="tweetimage" alt=""></a>
+            `);
+            var typewriter = new Typewriter(document.getElementById('thetweet'), {
+              loop: false,
+              cursor: "",
+              delay: 25
+            });
+            var totype = thetweets[0].text;
+            if(thetweets[0].extended_tweet){
+              totype=thetweets[0].extended_tweet.full_text;
+            }
+            totype = totype.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+            $("#tweetimage").fadeOut(0);
+            $(".overlay").each(function(){
+              $(this).fadeOut(0);
+            });
+            $("#tweetimage").attr('src', "");
+            $("#tweetimageurl").attr('href', "");
+            if(thetweets[0].entities){
+              if(thetweets[0].entities.media){
+                $("#tweetimage").attr('src', thetweets[0].entities.media[0].media_url_https);
+                $("#tweetimageurl").attr('href', thetweets[0].entities.media[0].media_url_https);
+              }
+            }
+            shuffle(thetweets);
+            typewriter.pauseFor(250).typeString(decodeHTMLEntities(totype)).callFunction(function(){
+              async function iswinner(tweetid){
+                const response = await fetch("api/endless/guess", {headers: {authentification: game, tweetid:tweetid}});
+                var thisshit = response.json();
+                return thisshit;
+              }
+              function endgame(data){
+                fetch("api/endless/leaderboard")
+                  .then(leaderboard => {
+                    leaderboard.json()
+                    .then(leaderboard=>{
+                      leaderboard=leaderboard.leaderboard;
+                      score = data.score;
+                      $(".row").fadeOut(200);
+                      setTimeout(function(){
+                        $(".play").each(function(){
+                          $(this).fadeOut(0);
+                        });
+                        analytics.logEvent('game_end', {
+                          id: game,
+                          mode: 'endless',
+                          score: score
+                        });
+                        $(".centre").addClass("funnycentre");
+                        function msToTime(s) {
+                          var ms = s % 1000;
+                          s = (s - ms) / 1000;
+                          var secs = s % 60;
+                          s = (s - secs) / 60;
+                          var mins = s % 60;
+                          var hrs = (s - mins) / 60;
+                          return hrs + ':' + mins + ':' + secs + '.' + ms;
+                        }
+                        $(".centre").html(`
+                          <p>you got ${score} correct! congrats!</p>
+                          <p><a id="playagain">play again?</a></p>
+                          <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}%20on%20https%3A//whotweeted.me%20in%20ENDLESS%20mode%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
+                            share on twitter
+                          </a></p>
+                          <p><a id="mainmenu">main menu</a></p>
+                          <p style="line-height: 110%;">Leaderboard:<small>
+                            <br>🥇 ${leaderboard[0].username}: ${leaderboard[0].score} <span class="theat">(in ${msToTime(leaderboard[0].time)})</span>
+                            <br>🥈 ${leaderboard[1].username}: ${leaderboard[1].score} <span class="theat">(in ${msToTime(leaderboard[1].time)})</span>
+                            <br>🥉 ${leaderboard[2].username}: ${leaderboard[2].score} <span class="theat">(in ${msToTime(leaderboard[2].time)})</span>
+                          </small></p>
+                        `);
+                        $("#playagain").click(function(){
+                          $(".row").fadeOut(200);
+                          setTimeout(function(){
+                            window.location.reload(0);
+                          }, 200);
+                        });
+                        $("#mainmenu").click(function(){
+                          $("#mainmenu").unbind();
+                          anime({
+                            targets: '.menubox',
+                            width: window.innerWidth,
+                            easing: 'easeInQuad',
+                            duration: 500,
+                            complete: function(anim) {
+                              $(".menubox").css("width", "100%");
+                              window.location.replace("play");
+                            }
+                          });
+                        });
+                        $(".row").fadeIn(200);
+                    });
+                  });
+                }, 200);
+              }
+              $("#tweetimage").fadeIn(500);
+              setTimeout(function(){
+                $(".one").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[0].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[0].user.name} <span class="theat">(@${thetweets[0].user.screen_name})</p>
+                `);
+                $(".one").fadeIn(500);
+                $(".one").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  iswinner(thetweets[0].id_str)
+                    .then(data=>{
+                      if(data.correct){
+                        $(".one .imagecont .overlay").attr('src', 'static/img/tick.png');
+                        $(".one .imagecont .overlay").fadeIn(500);
+                        score++;
+                        analytics.logEvent('round_correct', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        setTimeout(startgame, 500);
+                      }else{
+                        analytics.logEvent('round_incorrect', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        $(".one .imagecont .overlay").attr('src', 'static/img/cross.png');
+                        $(".one .imagecont .overlay").fadeIn(500);
+                        setTimeout(function(){
+                          endgame(data);
+                        }, 500);
+                      }
+                    });
+                });
+                $(".two").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[1].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[1].user.name} <span class="theat">(@${thetweets[1].user.screen_name})</p>
+                `);
+                $(".two").fadeIn(500);
+                $(".two").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  iswinner(thetweets[1].id_str)
+                    .then(data=>{
+                      if(data.correct){
+                        $(".two .imagecont .overlay").attr('src', 'static/img/tick.png');
+                        $(".two .imagecont .overlay").fadeIn(500);
+                        score++;
+                        analytics.logEvent('round_correct', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        setTimeout(startgame, 500);
+                      }else{
+                        analytics.logEvent('round_incorrect', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        $(".two .imagecont .overlay").attr('src', 'static/img/cross.png');
+                        $(".two .imagecont .overlay").fadeIn(500);
+                        setTimeout(function(){
+                          endgame(data);
+                        }, 500);
+                      }
+                    });
+                });
+                $(".three").html(`
+                  <div class="imagecont">
+                    <img draggable="false" src="" class="accountpfp overlay" alt="">
+                    <img draggable="false" src="${thetweets[2].user.profile_image_url_https.replace("_normal", "_400x400")}" class="accountpfp" alt="">
+                  </div>
+                  <p>${thetweets[2].user.name} <span class="theat">(@${thetweets[2].user.screen_name})</p>
+                `);
+                $(".three").fadeIn(500);
+                $(".three").click(function(){
+                  $(".play").each(function(){
+                    $(this).unbind();
+                  });
+                  iswinner(thetweets[2].id_str)
+                    .then(data=>{
+                      if(data.correct){
+                        $(".three .imagecont .overlay").attr('src', 'static/img/tick.png');
+                        $(".three .imagecont .overlay").fadeIn(500);
+                        score++;
+                        analytics.logEvent('round_correct', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        setTimeout(startgame, 500);
+                      }else{
+                        analytics.logEvent('round_incorrect', {
+                          id: game,
+                          mode: 'endless'
+                        });
+                        $(".three .imagecont .overlay").attr('src', 'static/img/cross.png');
+                        $(".three .imagecont .overlay").fadeIn(500);
+                        setTimeout(function(){
+                          endgame(data);
+                        }, 500);
+                      }
+                    });
+                });
+              }, 500);
+            }).start();
+            $(".row").fadeIn(200);
+          });
+
+      }, 500);
+    }
+    $(".row").fadeOut(200);
+    setTimeout(function(){
+      $("#loadingstatus").html(`∞ rounds.`);
+      $(".row").fadeIn(200);
+      setTimeout(function(){
+        $(".row").fadeOut(200);
+        setTimeout(function(){
+          $("#loadingstatus").html(`a chance to get on the leaderboard.`);
+          $(".row").fadeIn(200);
+          setTimeout(function(){
+            $(".row").fadeOut(200);
+            setTimeout(function(){
+              $("#loadingstatus").html(`let's go!`);
+              $(".row").fadeIn(200);
+              setTimeout(function(){
+                $(".row").fadeOut(200);
+                $(".play").fadeIn(0);
+                startgame();
+              }, 600);
+            }, 300);
+          }, 600);
+        }, 300);
+      }, 600);
+    }, 800);
+  });
+</script>
+<div class="menubox">
+  <p></p>
+</div>
+{{#def.include('template/foot')}}

@@ -1,0 +1,158 @@
+{{#def.include('template/head')}}
+<style media="screen">
+  body{
+    background: rgb(21, 32, 43);
+    overflow:hidden;
+    user-select: none;
+  }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+    margin-top:3vw;
+    cursor: pointer;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    margin: auto;
+    color: #FFFFFF;
+    width: 50%;
+    font-size: 1.5vw;
+    font-weight: 500;
+  }
+  .row{
+    height: 100%;
+    display: none;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  small{
+    font-size: 1vw;
+  }
+  .centre p{
+    font-size: 2.5vw;
+    width: 100%;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: 500;
+    padding-left: 1.5rem;
+    width: calc(100% - 3rem);
+    padding-right: 1.5rem;
+    user-select: none;
+    margin: auto;
+    padding-top: 1rem;
+  }
+  .funnycentre{
+    top: 50%;
+    transform: translateY(-50%);
+    position: relative;
+  }
+  .buffer{
+    width:0%;
+    float:left;
+  }
+  #tweetimage{
+    display:block;
+    margin:auto;
+    max-height: 20vw;
+    max-width: 50vw;
+    border-radius: 16px;
+    margin-top: 1vw;
+  }
+  .accountpfp{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+  }
+  .imagecont{
+    width:35%;
+    display: block;
+    margin: auto;
+  }
+  .overlay{
+    position:absolute;
+    width:inherit;
+    height:auto;
+  }
+  .theat{
+    color: rgb(136, 153, 166);
+  }
+  #loadingstatus{
+    cursor: revert;
+  }
+  .menubox{
+    position: absolute;
+    height: 100%;
+    width: 0%;
+    background: #1DA1F2;
+    top: 0; bottom: 0; right: 0;
+  }
+  @media only screen and (max-width: 750px) {
+    .play{
+      width: 50%;
+      height: 25%;
+      margin-top:5vw;
+    }
+    #tweetimage{
+      max-height: 40vw;
+      max-width: 70vw;
+    }
+    .imagecont{
+      width:50%;
+    }
+    .buffer{
+      width:25%;
+      height: 25%;
+    }
+    .play p{
+      font-size: 3.5vw;
+    }
+    .centre p{
+      font-size: 6vw;
+    }
+  }
+</style>
+
+<div class="row" style="">
+  <div class="centre funnycentre">
+    <div class="loadingparent" style="height:100%;">
+      <p id="loadingstatus" class="">to play endless mode, you need to login.<br><a id="endless">login with twitter</a></p>
+    </div>
+  </div>
+  <div class="play one">
+    <p></p>
+  </div>
+  <div class="play two">
+    <p></p>
+  </div>
+  <div class="buffer">
+    <p></p>
+  </div>
+  <div class="play three">
+    <p></p>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(".row").fadeOut(0);
+$(".play").fadeOut(0);
+$(".row").fadeIn(200);
+$("#endless").click(function(){
+  $(".row").fadeOut(200);
+  setTimeout(function(){
+    window.location.replace("login?redirect="+encodeURIComponent("play/endless"))
+  }, 200);
+});
+</script>
+<div class="menubox">
+  <p></p>
+</div>
+{{#def.include('template/foot')}}
