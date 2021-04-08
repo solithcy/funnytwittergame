@@ -81,7 +81,7 @@ exports.playendless = (req, res) => {
 exports.getleaderboard = (req, res) => {
   var db = new sqlite3.Database('data.db');
   db.serialize(function() {
-    db.all("SELECT * FROM leaderboard ORDER BY score desc, time desc LIMIT 15", function(err, data){
+    db.all("SELECT * FROM leaderboard ORDER BY score desc, time asc LIMIT 15", function(err, data){
       return res.send({leaderboard:data});
     });
   });
