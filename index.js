@@ -1,6 +1,7 @@
 // IMPORT SHIT
 
 const express = require('express');
+const session = require('express-session');
 const config = require('./config.json');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
