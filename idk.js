@@ -187,7 +187,7 @@ exports.endlessguess = (req, res) => {
     var db = new sqlite3.Database('data.db');
     //
     db.serialize(function() {
-      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, endlessgames[theid].time-new Date().getTime()], function(data){
+      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
         delete endlessgames[theid];
       });
     });
