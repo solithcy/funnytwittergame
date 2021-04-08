@@ -71,7 +71,6 @@ exports.how = (req, res) => {
 
 exports.login = (req, res) => {
   if(req.query.oauth_token&&req.query.oauth_verifier){
-    app.get('/twitter/callback', (req, res) => {
     tw.callback({
       oauth_token: req.query.oauth_token,
       oauth_verifier: req.query.oauth_verifier
@@ -84,7 +83,6 @@ exports.login = (req, res) => {
       delete  req.session.redirect;
       req.session.user = user;
       res.redirecttoredirect
-      });
     });
   }else{
     tw.login((err, tokenSecret, url) => {
