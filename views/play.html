@@ -7,7 +7,7 @@
   .play{
     float: left;
     height: 100%;
-    width: 33.33%;
+    width: 25%;
     position:relative;
     user-select: none;
   }
@@ -72,7 +72,7 @@
   @media only screen and (max-width: 750px) {
     .play{
       width: 100%;
-      height: 33.3%;
+      height: 25%;
     }
     .play p{
       font-size: 5.75vw;
@@ -98,6 +98,12 @@
   <div class="play two">
     <img class="content" id="cattweet" draggable="false" src="static/img/twitterCat.png" alt="">
     <p class="content">cat</p>
+  </div>
+  <div class="play">
+    <div class="soon four">
+      <img class="content" draggable="false" src="static/img/twitterBlack.png" alt="">
+      <p class="content blink">coming<br>soon</p>
+    </div>
   </div>
 </div>
 <div class="box left0">
@@ -128,6 +134,7 @@
         }
       });
       $(".play.classic p").fadeOut(200);
+      $(".play .four").fadeOut(200);
       $(".play.one .content").fadeOut(200);
       $(".play.two").fadeOut(200);
     });
@@ -138,6 +145,7 @@
         $(this).unbind();
       });
       $(".play.three .content").fadeOut(200);
+      $(".play .four").fadeOut(200);
       $(".play.one .content").fadeOut(200);
       $(".play.two p").fadeOut(200);
       function easeInOutQuad (t, b, c, d) {
@@ -181,6 +189,7 @@
         $(this).unbind();
       });
       $(".play.three").fadeOut(200);
+      $(".play .four").fadeOut(200);
       $(".play.two").fadeOut(200);
       $(".play.one p").fadeOut(200);
       function easeInOutQuad (t, b, c, d) {
@@ -215,6 +224,33 @@
           }
         });
       }, 400);
+    });
+  });
+  $(".play .soon.four .content").each(function( index ) {
+    $(this).click(function(){
+      const xMax = 8;
+      anime({
+        targets: '.play .four',
+        easing: 'easeInOutSine',
+        duration: 550,
+        translateX: [
+          {
+            value: xMax * -1,
+          },
+          {
+            value: xMax,
+          },
+          {
+            value: xMax/-2,
+          },
+          {
+            value: xMax/2,
+          },
+          {
+            value: 0
+          }
+        ],
+      });
     });
   });
   $(".row").fadeOut(0);
