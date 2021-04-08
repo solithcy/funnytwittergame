@@ -119,7 +119,7 @@ exports.login = (req, res) => {
 exports.startgame = (req, res) => {
   var theid = uuidv4();
   if(req.query.endless){
-    endlessgames[theid] = {score:0, time:new Date.getTime()};
+    endlessgames[theid] = {score:0, time:new Date().getTime()};
   }
   else{
     games[theid] = {};
