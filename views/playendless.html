@@ -298,7 +298,7 @@ $.ajax({
                   .then(leaderboard => {
                     leaderboard.json()
                     .then(leaderboard=>{
-                      console.log(leaderboard);
+                      clearInterval(anti);
                       leaderboard=leaderboard.leaderboard;
                       score = data.score;
                       $(".row").fadeOut(200);
@@ -536,9 +536,9 @@ $.ajax({
               setTimeout(function(){
                 $(".row").fadeOut(200);
                 $(".play").fadeIn(0);
-                var i = setInterval(function(){
+                var anti = setInterval(function(){
                   if(!document.hasFocus()){
-                    clearInterval(i);
+                    clearInterval(anti);
                     fetch("api/endless/disqualify", {headers: {authentification: game}})
                       .then(data=>{
                         $("#warning").text("your leaderboard place has been disqualified for going off the page");
