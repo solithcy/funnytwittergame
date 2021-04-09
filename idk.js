@@ -188,6 +188,9 @@ exports.gettweetsendless = (req, res) => {
   }
   totype = totype.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
   setTimeout(function(){
+    if(!endlessgames[theid].currenttweets){
+      return;
+    }
     if(endlessgames[theid].currenttweets[0].id_str==thetweets[0].id_str){
       endlessgames[theid].disqualified=true;
     }
