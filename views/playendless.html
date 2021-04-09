@@ -397,7 +397,7 @@ $.ajax({
                     s = (s - secs) / 60;
                     return parseFloat(secs + '.' + ms).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping:false});
                   }
-                  $("#timer").text(`Time: ${msToTime(current)}`);
+                  $("#timer").text(`time: ${msToTime(current)}`);
                 }, 10);
                 $("#timer").fadeIn(500);
                 $(".one").html(`
