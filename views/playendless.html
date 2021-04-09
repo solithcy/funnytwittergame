@@ -306,6 +306,8 @@ $.ajax({
                         $(".play").each(function(){
                           $(this).fadeOut(0);
                         });
+                        $("#round").fadeOut(0);
+                        $("#timer").fadeOut(0);
                         analytics.logEvent('game_end', {
                           id: game,
                           mode: 'endless',
