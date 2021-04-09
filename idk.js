@@ -71,6 +71,10 @@ exports.how = (req, res) => {
   return res.render("how", {version: pjson.version, onhow:true})
 }
 
+exports.thankyou = (req, res) => {
+  return res.render("thankyou", {version: pjson.version})
+}
+
 exports.playendless = (req, res) => {
   if(req.session.user){
     return res.render("playendless", {version:pjson.version});

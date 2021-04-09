@@ -18,6 +18,7 @@ module.exports = function(app) {
     app.get('/play/endless', idk.playendless);
     app.get('/how', idk.how);
     app.get('/login', idk.login);
+    app.get('/thankyou', idk.thankyou);
 
     app.get('/api/startgame', idk.startgame);
     app.get('/api/tweets', idk.gettweets);

@@ -18,6 +18,33 @@
     background: #1DA1F2;
     left: 0; bottom: 0; right: 0;
   }
+  .donatebox{
+    width: 24em;
+    max-width: 50%;
+    height: 24em;
+    max-height: 50%;
+    z-index: 101;
+    background: white;
+    color: black;
+    margin: auto;
+    margin-bottom: 0.5rem;
+    margin-left: 0.5rem;
+    position: fixed;
+    bottom: 0;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0px 0px 25px 0 rgb(0 0 0 / 50%);
+    display: none;
+    text-align: center;
+    user-select: none;
+  }
+  .donateexit{
+    position: absolute;
+    right: 16px;
+    user-select: none;
+    cursor: pointer;
+    font-size: 2em;
+  }
 </style>
 <div class="howbox">
   <p></p>
@@ -29,8 +56,30 @@
   {{?!it.onhow}}
     <br>
     <a style="color:white;" id="howtext"><u>how to play</u></a>
+    <br>
+    <a style="color:white" id="donate"><u>donate</u></a>
   {{?}}
 </p>
+<div class="donatebox">
+  <span class="material-icons donateexit">close</span>
+  <p style="margin-right: 2em;margin-left: 2em;font-size:110%">thanks for considering donating to <a href="/" target="_self">whotweeted.me</a></p>
+  <p>amount:
+    <select id="donationamount" name="donationamount" onchange="updatebutton()">
+      <option value="price_1IeQ1ZHLJgqbSmeE3ksQdRzH">£1</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEIVwLKHgs">£2</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEDulWO7lm" selected="selected">£5</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEbVahpT5m">£10</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEIkxASA9K">£15</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEtEcRju20">£30</option>
+      <option value="price_1IeQ1ZHLJgqbSmeEY6QIxCry">£50</option>
+    </select>
+    <br>
+  </p>
+  <script src="https://js.stripe.com/v3"></script>
+  <div class="donatebutton">
+
+  </div>
+</div>
 <script type="text/javascript">
   $("#howtext").click(function(){
     $("#howtext").unbind();
@@ -45,6 +94,49 @@
       }
     });
   });
+  $("#donate").click(function(){
+    $(".donatebox").fadeIn(300);
+  });
+  $(".donateexit").click(function(){
+    $(".donatebox").fadeOut(300);
+  });
+  function updatebutton(){
+    $(".donatebutton").html(`
+    <button
+      style="background-color:#6772E5;color:#FFF;padding:8px 12px;border:0;border-radius:4px;font-size:1em"
+      id="checkout-button-${$( "#donationamount" ).val()}"
+      role="link"
+      type="button"
+    >
+      Donate
+    </button>
+
+    <div id="error-message"></div>
+
+    <script>
+    (function() {
+      var stripe = Stripe('pk_live_51IDvsSHLJgqbSmeEZgcFFYEmuf5kn3Al1f17ahKc74tC9vVSchRMEdL3ZvgZdMVwkrqlAThRwFxcaoc39roWPXb500FekIcg7d');
+
+      var checkoutButton = document.getElementById('checkout-button-${$( "#donationamount" ).val()}');
+      checkoutButton.addEventListener('click', function () {
+        stripe.redirectToCheckout({
+          lineItems: [{price: '${$( "#donationamount" ).val()}', quantity: 1}],
+          mode: 'payment',
+          successUrl: window.location.protocol + '//whotweeted.me/thankyou',
+          cancelUrl: window.location.protocol + '//whotweeted.me/',
+        })
+        .then(function (result) {
+          if (result.error) {
+            var displayError = document.getElementById('error-message');
+            displayError.textContent = result.error.message;
+          }
+        });
+      });
+    })();
+    </`+`script>
+    `);
+  }
+  updatebutton();
 </script>
 </div>
 </body>

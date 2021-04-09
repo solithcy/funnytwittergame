@@ -1,0 +1,119 @@
+{{#def.include('template/head')}}
+<style media="screen">
+  body{
+    background: rgb(21, 32, 43);
+  }
+  .play{
+    float: left;
+    height: 100%;
+    width: 33.33%;
+    position:relative;
+    user-select: none;
+  }
+  .play.classic{
+
+  }
+  .play .soon{
+    height: 100%;
+  }
+  .play p{
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    color: #FFFFFF;
+    width: 50%;
+    font-size: 2.2vw;
+    font-weight: 500;
+  }
+  .play h1{
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: auto;
+    width: 50%;
+  }
+  .soon p{
+    color: #FFFFFF;
+    font-size: 1.7vw;
+  }
+  .soon img{
+    opacity: 0.7;
+  }
+  .box{
+    position: absolute;
+    width: 0%;
+    height: 100%;
+    background: rgb(21, 32, 43);
+    top: 0; left: 0; bottom: 0; right: 0;
+  }
+  .row{
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  @media only screen and (max-width: 965px) {
+    .play{
+      width: 100%;
+      height: 33.3%;
+    }
+    .play p{
+      font-size: 5.75vw;
+    }
+    .soon p{
+      font-size: 4.7vw;
+    }
+    .row{
+      height: calc(100% - 2rem);
+    }
+  }
+  @media only screen and (min-width: 676px) and (max-width: 965px) {
+    .play p{
+      font-size: 2.5vw;
+    }
+  }
+</style>
+<canvas id="confetti"></canvas>
+<div class="row" style="">
+  <div class="play">
+    <p></p>
+  </div>
+  <div class="play classic">
+    <div class="soon">
+      <p class="content">thank you so much for donating to <a href="/" target="_self">whotweeted.me</a>! your donations help keep this site running without ads!</p>
+    </div>
+  </div>
+  <div class="play">
+    <p></p>
+  </div>
+</div>
+<script type="text/javascript">
+  $("#confetti").width(window.innerWidth);
+  $("#confetti").height(window.innerHeight);
+  var theconfetti = document.getElementById('confetti');
+
+var myConfetti = confetti.create(theconfetti, {
+  resize: true,
+  useWorker: true
+});
+myConfetti({
+  particleCount: 1000,
+  spread: 360
+});
+</script>
+{{#def.include('template/foot')}}
