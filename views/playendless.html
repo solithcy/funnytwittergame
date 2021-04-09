@@ -298,6 +298,7 @@ $.ajax({
                   .then(leaderboard => {
                     leaderboard.json()
                     .then(leaderboard=>{
+                      console.log(data);
                       leaderboard=leaderboard.leaderboard;
                       score = data.score;
                       $(".row").fadeOut(200);
