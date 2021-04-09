@@ -191,6 +191,9 @@ exports.gettweetsendless = (req, res) => {
     if(!endlessgames[theid]){
       return;
     }
+    if(!endlessgames[theid].currenttweets){
+      return;
+    }
     if(endlessgames[theid].currenttweets[0].id_str==thetweets[0].id_str){
       endlessgames[theid].disqualified=true;
     }
