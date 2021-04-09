@@ -72,7 +72,7 @@ exports.how = (req, res) => {
 }
 
 exports.playendless = (req, res) => {
-  if(!req.session.user){
+  if(req.session.user){
     return res.render("playendless", {version:pjson.version});
   }
   return res.render("needslogin", {version:pjson.version});

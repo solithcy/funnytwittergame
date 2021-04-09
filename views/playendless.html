@@ -318,13 +318,10 @@ $.ajax({
                           s = (s - secs) / 60;
                           var mins = s / 60;
                           return s + ':' + secs.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + '.' + ms;
-<<<<<<< HEAD
                         }
                         var thetime = '';
                         if(data.time){
                           thetime=`<p>you ran out of time..</p>`;
-=======
->>>>>>> 348f87269e355f8a60d87f6565bf453739fd31f6
                         }
                         $(".centre").html(`
                           ${thetime}
