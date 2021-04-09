@@ -26,6 +26,8 @@ module.exports = function(app) {
     app.get('/api/tweets/endless', idk.gettweetsendless);
     app.get('/api/endless/guess', idk.endlessguess);
     app.get('/api/endless/leaderboard', idk.getleaderboard);
+    app.get('/api/endless/disqualify', idk.endlessdisqualify);
+    app.get('/api/endless/notime', idk.endlesstime);
 
     app.get('*', (req, res) => {
       res.status(404);

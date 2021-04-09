@@ -95,6 +95,26 @@
     background: #1DA1F2;
     top: 0; bottom: 0; right: 0;
   }
+  .info{
+    position: fixed;
+    user-select: none;
+    margin: auto;
+    bottom: 0;
+    margin-bottom: 0.5rem;
+    margin-right: 0.5rem;
+    color: white;
+    z-index: 100;
+    font-size: 2vw;
+    right: 0;
+    width: 33.3%;
+    text-align: right;
+  }
+  .info p{
+    margin: auto;
+  }
+  .info #warning{
+    font-size: 75%;
+  }
   @media only screen and (max-width: 750px) {
     .play{
       width: 50%;
@@ -114,6 +134,10 @@
     }
     .play p{
       font-size: 3.5vw;
+    }
+    .info{
+      font-size: 6vw;
+      width: 50%;
     }
     .centre p{
       font-size: 6vw;
@@ -141,6 +165,11 @@
   </div>
   <div class="play three">
     <p></p>
+  </div>
+  <div class="info">
+    <p id="timer"></p>
+    <p id="round"></p>
+    <p id="warning"></p>
   </div>
 </div>
 
@@ -189,10 +218,8 @@ function decodeHTMLEntities(text) {
         ['nbsp', ' '],
         ['quot', '"']
     ];
-
     for (var i = 0, max = entities.length; i < max; ++i)
         text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
-
     return text;
 }
 setTimeout(function(){
@@ -217,47 +244,12 @@ $.ajax({
     function startgame(){
       $(".row").fadeOut(200);
       setTimeout(function(){
+        $("#timer").text("");
         $(".centre").removeClass("funnycentre");
         $(".play").each(function(){
           $(this).fadeOut(0);
         });
-        if(theround==null){
-          analytics.logEvent('game_end', {
-            id: game,
-            mode: 'endless',
-            score: score
-          });
-          $(".centre").addClass("funnycentre");
-          $(".centre").html(`
-            <p>you got ${score}/${amountofrounds} correct! congrats!</p>
-            <p><a id="playagain">play again?</a></p>
-            <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}/${amountofrounds}%20on%20https%3A//whotweeted.me%20in%20endless%20mode%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
-              share on twitter
-            </a></p>
-            <p><a id="mainmenu">main menu</a></p>
-          `);
-          $("#playagain").click(function(){
-            $(".row").fadeOut(200);
-            setTimeout(function(){
-              window.location.reload(0);
-            }, 200);
-          });
-          $("#mainmenu").click(function(){
-            $("#mainmenu").unbind();
-            anime({
-              targets: '.menubox',
-              width: window.innerWidth,
-              easing: 'easeInQuad',
-              duration: 500,
-              complete: function(anim) {
-                $(".menubox").css("width", "100%");
-                window.location.replace("play");
-              }
-            });
-          });
-          $(".row").fadeIn(200);
-          return;
-        }
+        $("#timer").fadeOut(0);
         analytics.logEvent('round_start', {
           id: game,
           mode: 'endless',
@@ -267,6 +259,7 @@ $.ajax({
           .then(data=>{
             var thetweets = data.tweets;
             theround++;
+            $("#round").text(`round ${theround}`);
             $(".centre").html(`
             <p>“<span id='thetweet'></span>”</p>
             <a id="tweetimageurl" href="" target="_blank"><img draggable="false" src="" id="tweetimage" alt=""></a>
@@ -324,9 +317,14 @@ $.ajax({
                           var secs = s % 60;
                           s = (s - secs) / 60;
                           var mins = s / 60;
-                          return mins + ':' + secs.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + '.' + ms;
+                          return s + ':' + secs.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false}) + '.' + ms;
+                        }
+                        var thetime = '';
+                        if(data.time){
+                          thetime=`<p>you ran out of time..</p>`;
                         }
                         $(".centre").html(`
+                          ${thetime}
                           <p>you got ${score} correct! congrats!</p>
                           <p><a id="playagain">play again?</a></p>
                           <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}%20on%20https%3A//whotweeted.me%20in%20ENDLESS%20mode%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
@@ -364,7 +362,42 @@ $.ajax({
                 }, 200);
               }
               $("#tweetimage").fadeIn(500);
+              var stop = false;
               setTimeout(function(){
+                var timeend = new Date().getTime()+15500;
+                var timer = setInterval(function(){
+                  if(stop){
+                    clearInterval(timer);
+                  }
+                  var current = timeend-new Date().getTime();
+                  if(current<=0){
+                    $(".play").each(function(){
+                      $(this).unbind();
+                    });
+                    clearInterval(timer);
+                    $("#timer").text("time's up!");
+                    fetch("api/endless/notime", {headers: {authentification: game}})
+                      .then(data => {
+                        data.json()
+                        .then(data=>{
+                          data.time=true;
+                          setTimeout(function(){
+                            endgame(data);
+                          }, 500);
+                        })
+                      });
+                    return;
+                  }
+                  function msToTime(s) {
+                    var ms = s % 1000;
+                    s = (s - ms) / 1000;
+                    var secs = s % 60;
+                    s = (s - secs) / 60;
+                    return parseFloat(secs + '.' + ms).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping:false});
+                  }
+                  $("#timer").text(`Time: ${msToTime(current)}`);
+                }, 10);
+                $("#timer").fadeIn(500);
                 $(".one").html(`
                   <div class="imagecont">
                     <img draggable="false" src="" class="accountpfp overlay" alt="">
@@ -374,6 +407,7 @@ $.ajax({
                 `);
                 $(".one").fadeIn(500);
                 $(".one").click(function(){
+                  stop=true;
                   $(".play").each(function(){
                     $(this).unbind();
                   });
@@ -410,6 +444,7 @@ $.ajax({
                 `);
                 $(".two").fadeIn(500);
                 $(".two").click(function(){
+                  stop=true;
                   $(".play").each(function(){
                     $(this).unbind();
                   });
@@ -446,6 +481,7 @@ $.ajax({
                 `);
                 $(".three").fadeIn(500);
                 $(".three").click(function(){
+                  stop=true;
                   $(".play").each(function(){
                     $(this).unbind();
                   });
@@ -497,6 +533,15 @@ $.ajax({
               setTimeout(function(){
                 $(".row").fadeOut(200);
                 $(".play").fadeIn(0);
+                var i = setInterval(function(){
+                  if(!document.hasFocus()){
+                    clearInterval(i);
+                    fetch("api/endless/disqualify", {headers: {authentification: game}})
+                      .then(data=>{
+                        $("#warning").text("your leaderboard place has been disqualified for going off the page");
+                      });
+                  }
+                }, 1000);
                 startgame();
               }, 600);
             }, 300);

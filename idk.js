@@ -72,7 +72,7 @@ exports.how = (req, res) => {
 }
 
 exports.playendless = (req, res) => {
-  if(req.session.user){
+  if(!req.session.user){
     return res.render("playendless", {version:pjson.version});
   }
   return res.render("needslogin", {version:pjson.version});
@@ -165,6 +165,33 @@ exports.gettweetsendless = (req, res) => {
   }
   res.send({tweets:thetweets});
   endlessgames[theid].currenttweets = thetweets;
+  function decodeHTMLEntities(text) {
+      var entities = [
+          ['amp', '&'],
+          ['apos', '\''],
+          ['#x27', '\''],
+          ['#x2F', '/'],
+          ['#39', '\''],
+          ['#47', '/'],
+          ['lt', ''],
+          ['gt', ''],
+          ['nbsp', ' '],
+          ['quot', '"']
+      ];
+      for (var i = 0, max = entities.length; i < max; ++i)
+          text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1]);
+      return text;
+  }
+  var totype = thetweets[0].text;
+  if(thetweets[0].extended_tweet){
+    totype=thetweets[0].extended_tweet.full_text;
+  }
+  totype = totype.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+  setTimeout(function(){
+    if(endlessgames[theid].currenttweets[0].id_str==thetweets[0].id_str){
+      endlessgames[theid].disqualified=true;
+    }
+  }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
 }
 
 exports.endlessguess = (req, res) => {
@@ -184,14 +211,48 @@ exports.endlessguess = (req, res) => {
     return res.send({correct:true, score:endlessgames[theid].score});
   }else{
     res.send({correct:false, score:endlessgames[theid].score});
+    if(endlessgames[theid].disqualified){
+      return;
+    }
     var db = new sqlite3.Database('data.db');
-    //
     db.serialize(function() {
       db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
         delete endlessgames[theid];
       });
     });
   }
+}
+
+exports.endlessdisqualify = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in endlessgames)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  endlessgames[theid].disqualified=true;
+  return res.send({error:undefined});
+}
+
+exports.endlesstime = (req, res) => {
+  var theid = req.headers.authentification;
+  if(!theid){
+    return res.send({error:401, msg:"game_not_given"});
+  }
+  if(!(theid in endlessgames)){
+    return res.send({error:401, msg:"game_doesnt_exist"});
+  }
+  res.send({correct:false, score:endlessgames[theid].score});
+  if(endlessgames[theid].disqualified){
+    return;
+  }
+  var db = new sqlite3.Database('data.db');
+  db.serialize(function() {
+    db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
+      delete endlessgames[theid];
+    });
+  });
 }
 
 exports.gettweetsbiden = (req, res) => {
