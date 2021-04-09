@@ -32,6 +32,7 @@ var endlessgames = {};
 var tweets = [];
 var bidentweets = [];
 var cattweets = [];
+var db = new sqlite3.Database('data.db');
 
 function getRandom(arr, n) {
   var result = new Array(n),
@@ -83,9 +84,10 @@ exports.playendless = (req, res) => {
 }
 
 exports.getleaderboard = (req, res) => {
-  var db = new sqlite3.Database('data.db');
-  db.all("SELECT * FROM leaderboard ORDER BY score desc, time asc LIMIT 15", function(err, data){
-    return res.send({leaderboard:data});
+  db.serialize(function() {
+    db.all("SELECT * FROM leaderboard ORDER BY score desc, time asc LIMIT 15", function(err, data){
+      return res.send({leaderboard:data});
+    });
   });
 }
 
@@ -222,7 +224,6 @@ exports.endlessguess = (req, res) => {
     if(endlessgames[theid].disqualified){
       return;
     }
-    var db = new sqlite3.Database('data.db');
     db.serialize(function() {
       db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
         delete endlessgames[theid];
