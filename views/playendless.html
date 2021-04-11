@@ -261,6 +261,7 @@ $.ajax({
             var thetweets = data.tweets;
             theround++;
             $("#round").text(`round ${theround}`);
+            $("#round").fadeIn(0);
             if(data.lives==1){
               $("#lives").text(`${data.lives} life`);
             }else{
@@ -385,6 +386,7 @@ $.ajax({
                                         });
                                     }
                                   }, 100);
+                                  $("#warning").text("");
                                   startgame();
                                 }
                               }, 500);
