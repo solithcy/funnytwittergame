@@ -2,6 +2,7 @@
 <script type="text/javascript">
   const urlParams = new URLSearchParams(window.location.search);
   const price = urlParams.get('price');
+  var stripe = Stripe('pk_live_51IDvsSHLJgqbSmeEZgcFFYEmuf5kn3Al1f17ahKc74tC9vVSchRMEdL3ZvgZdMVwkrqlAThRwFxcaoc39roWPXb500FekIcg7d');
   stripe.redirectToCheckout({
       lineItems: [{price: price, quantity: 1}],
       mode: 'payment',
