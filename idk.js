@@ -221,6 +221,13 @@ exports.extralife = async (req, res) => {
   req.session.endless.ended=false;
   req.session.endless.lives++;
   req.session.endless.disqualified=false;
+  if(req.session.endless.leaderboardid){
+    db.serialize(function() {
+      db.run("DELETE FROM leaderboard WHERE id = ?", [req.session.endless.leaderboardid], function(data){
+      });
+      delete req.session.endless.leaderboardid;
+    });
+  }
   return res.send(`<script>
     const channel = new BroadcastChannel("whotweetedme");
     channel.postMessage({error:"paid"});
@@ -258,7 +265,7 @@ exports.endlessguess = (req, res) => {
       }
       db.serialize(function() {
         db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
-          console.log(this);
+          req.session.endless.leaderboardid=this.lastID;
         });
       });
     }
