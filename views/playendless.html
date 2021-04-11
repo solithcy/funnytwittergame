@@ -521,8 +521,9 @@ $.ajax({
 
       }, 500);
     }
-    $(".row").fadeOut(200);
     setTimeout(function(){
+      $(".row").fadeOut(200);
+      setTimeout(function(){
       $("#loadingstatus").html(`∞ rounds.`);
       $(".row").fadeIn(200);
       setTimeout(function(){
@@ -553,6 +554,7 @@ $.ajax({
           }, 600);
         }, 300);
       }, 600);
+    }, 500)
     }, 800);
   });
 </script>
