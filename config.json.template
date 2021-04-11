@@ -28,5 +28,8 @@
     "accesstoken": "123-abc",
     "accesstokensecret": "abc123"
   },
-  "cookiesecret": "changeme"
+  "cookiesecret": "changeme",
+  "stripe":{
+    "live": "sk_live_abc123"
+  }
 }
