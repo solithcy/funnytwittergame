@@ -364,9 +364,10 @@ $.ajax({
                           open("api/endless/extra/get");
                           const channel = new BroadcastChannel("whotweetedme");
                           channel.addEventListener("message", e => {
+                            console.log("hi");
                             if(e.data){
-                              if(e.error){
-                                return;
+                              if(e.error == "cancelled"){
+                                return channel.close();
                               }
                               analytics.logEvent('purchase', {
                                 currency: 'GBP',
@@ -394,6 +395,7 @@ $.ajax({
                                   startgame();
                                 }
                               }, 500);
+                              channel.close();
                             }
                           });
                         });
