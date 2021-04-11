@@ -250,7 +250,6 @@ exports.endlessguess = (req, res) => {
     return res.send({correct:true, score:req.session.endless.score});
   }else{
     req.session.endless.lives--;
-    console.log(req.session.endless.lives);
     res.send({correct:false, score:req.session.endless.score, lives:req.session.endless.lives});
     if(req.session.endless.lives==0){
       req.session.endless.ended = true;
@@ -262,8 +261,6 @@ exports.endlessguess = (req, res) => {
           console.log(data);
         });
       });
-    }else{
-      console.log(req.session.endless.lives);
     }
   }
 }
