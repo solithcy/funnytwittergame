@@ -373,8 +373,9 @@ $.ajax({
                                 }],
                                 value: 0.99
                               });
-                              littlegameing = setInterval(function(){
+                              var littlegameing = setInterval(function(){
                                 if(document.hasFocus()){
+                                  clearInterval(littlegameing);
                                   var anti = setInterval(function(){
                                     if(!document.hasFocus()){
                                       clearInterval(anti);
