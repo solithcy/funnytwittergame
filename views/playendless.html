@@ -373,9 +373,9 @@ $.ajax({
                                 }],
                                 value: 0.99
                               });
-                              var littlegameing = setInterval(function(){
+                              var littlegaming = setInterval(function(){
                                 if(document.hasFocus()){
-                                  clearInterval(littlegameing);
+                                  clearInterval(littlegaming);
                                   var anti = setInterval(function(){
                                     if(!document.hasFocus()){
                                       clearInterval(anti);
@@ -386,7 +386,7 @@ $.ajax({
                                     }
                                   }, 100);
                                   startgame();
-                                });
+                                }
                               }, 500);
                             }
                           });
