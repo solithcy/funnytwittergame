@@ -1,13 +1,8 @@
 {{#def.include('template/head')}}
 <script type="text/javascript">
   const urlParams = new URLSearchParams(window.location.search);
-  const price = urlParams.get('price');
+  const sessionid = urlParams.get('id');
   var stripe = Stripe('pk_live_51IDvsSHLJgqbSmeEZgcFFYEmuf5kn3Al1f17ahKc74tC9vVSchRMEdL3ZvgZdMVwkrqlAThRwFxcaoc39roWPXb500FekIcg7d');
-  stripe.redirectToCheckout({
-      lineItems: [{price: price, quantity: 1}],
-      mode: 'payment',
-      successUrl: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
-      cancelUrl: 'https://whotweeted.me/api/endless/extra/cancelled',
-    });
+  stripe.redirectToCheckout({sessionId: sessionid});
 </script>
 {{#def.include('template/foot')}}

@@ -2,7 +2,7 @@ const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
 const twitterlogin = require('login-with-twitter');
-const stripe = require('stripe')(config.stripe.live);
+const stripe = require('stripe')(config.stripe.live );
 var sqlite3 = require('sqlite3').verbose();
 const tw = new twitterlogin({
   consumerKey: config.loginauth.apikey,
@@ -233,6 +233,20 @@ exports.extralife = async (req, res) => {
     channel.postMessage({error:"paid"});
     window.close();
   </script>`)
+}
+
+exports.lifecheckout = async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    success_url: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
+    cancel_url: 'https://whotweeted.me/api/endless/extra/cancelled',
+    payment_method_types: ['card'],
+    line_items: [
+      {price: 'price_1If8LFHLJgqbSmeEwf2ZqH1O', quantity: 1},
+    ],
+    mode: 'payment',
+    allow_promotion_codes: true,
+  });
+  return res.redirect(`/api/checkout?id=${session.id}`);
 }
 
 exports.cancellife = (req, res) => {

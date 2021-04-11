@@ -30,6 +30,7 @@ module.exports = function(app) {
     app.get('/api/endless/disqualify', idk.endlessdisqualify);
     app.get('/api/endless/notime', idk.endlesstime);
     app.get('/api/endless/extra', idk.extralife);
+    app.get('/api/endless/extra/get', idk.lifecheckout);
     app.get('/api/endless/extra/cancelled', idk.cancellife);
     app.get('/api/checkout', staticpage('checkout'));
 
