@@ -220,6 +220,7 @@ exports.extralife = async (req, res) => {
   const customer = await stripe.customers.retrieve(session.customer);
   req.session.endless.ended=false;
   req.session.endless.lives++;
+  req.session.endless.disqualified=false;
   return res.send(`<script>
     const channel = new BroadcastChannel("whotweetedme");
     channel.postMessage({error:"paid"});
@@ -248,15 +249,19 @@ exports.endlessguess = (req, res) => {
     delete req.session.endless.currenttweets;
     return res.send({correct:true, score:req.session.endless.score});
   }else{
-    res.send({correct:false, score:req.session.endless.score});
-    if(req.session.endless.disqualified){
-      return;
-    }
-    db.serialize(function() {
-      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
-        req.session.endless.ended = true;
+    req.session.lives--;
+    res.send({correct:false, score:req.session.endless.score, lives:req.session.lives});
+    if(req.session.lives==0){
+      req.session.endless.ended = true;
+      if(req.session.endless.disqualified){
+        return;
+      }
+      db.serialize(function() {
+        db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
+
+        });
       });
-    });
+    }
   }
 }
 
