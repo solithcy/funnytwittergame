@@ -201,7 +201,7 @@ exports.gettweetsendless = (req, res) => {
   }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
 }
 
-exports.extralife = (req, res) => {
+exports.extralife = async (req, res) => {
   if(!req.session.endless){
     return res.send(`<script>
       const channel = new BroadcastChannel("whotweetedme");
