@@ -364,7 +364,6 @@ $.ajax({
                           open("api/endless/extra/get");
                           const channel = new BroadcastChannel("whotweetedme");
                           channel.addEventListener("message", e => {
-                            console.log("hi");
                             if(e.data){
                               if(e.data.error){
                                 return channel.close();
