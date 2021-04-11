@@ -2,6 +2,7 @@
 
 const express = require('express');
 const session = require('express-session');
+const SQLiteStore = require('connect-sqlite3')(session);
 const config = require('./config.json');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -30,6 +31,7 @@ app.use(session({
   secret: config.cookiesecret,
   resave: false,
   saveUninitialized: true,
+  store: new SQLiteStore,
   cookie: { secure: true }
 }))
 app.use('/static', express.static('static'));
