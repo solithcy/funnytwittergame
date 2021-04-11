@@ -254,6 +254,8 @@ exports.lifecheckout = async (req, res) => {
 
 exports.cancellife = (req, res) => {
   return res.send(`<script>
+    const channel = new BroadcastChannel("whotweetedme");
+    channel.postMessage({error:"cancelled"});
     window.close();
   </script>`);
 }
