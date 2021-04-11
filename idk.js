@@ -163,8 +163,8 @@ exports.gettweetsendless = (req, res) => {
     res.status(500);
     return res.send({error:500, msg:"not_enough_tweets", amount:tweets.length, needed:30})
   }
-  res.send({tweets:thetweets});
   req.session.endless.currenttweets = thetweets;
+  res.send({tweets:thetweets});
   function decodeHTMLEntities(text) {
       var entities = [
           ['amp', '&'],
