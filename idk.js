@@ -154,6 +154,9 @@ exports.gettweetsendless = (req, res) => {
   if(!(req.session.endless)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
+  if(req.session.endless.ended){
+    return res.send({error:401, msg:"game_ended"});
+  }
   if(req.session.endless.currenttweets){
     res.send({tweets:req.session.endless.currenttweets, lives:req.session.endless.lives});
     return;
@@ -251,8 +254,6 @@ exports.lifecheckout = async (req, res) => {
 
 exports.cancellife = (req, res) => {
   return res.send(`<script>
-    const channel = new BroadcastChannel("whotweetedme");
-    channel.postMessage({error:"cancelled"});
     window.close();
   </script>`);
 }
