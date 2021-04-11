@@ -249,9 +249,9 @@ exports.endlessguess = (req, res) => {
     delete req.session.endless.currenttweets;
     return res.send({correct:true, score:req.session.endless.score});
   }else{
-    req.session.lives--;
-    res.send({correct:false, score:req.session.endless.score, lives:req.session.lives});
-    if(req.session.lives==0){
+    req.session.endless.lives--;
+    res.send({correct:false, score:req.session.endless.score, lives:req.session.endless.lives});
+    if(req.session.endless.lives==0){
       req.session.endless.ended = true;
       if(req.session.endless.disqualified){
         return;
