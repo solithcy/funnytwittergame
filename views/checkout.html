@@ -1,0 +1,12 @@
+{{#def.include('template/head')}}
+<script type="text/javascript">
+  const urlParams = new URLSearchParams(window.location.search);
+  const price = urlParams.get('price');
+  stripe.redirectToCheckout({
+      lineItems: [{price: price, quantity: 1}],
+      mode: 'payment',
+      successUrl: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
+      cancelUrl: 'https://whotweeted.me/api/endless/extra/cancelled',
+    });
+</script>
+{{#def.include('template/foot')}}

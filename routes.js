@@ -4,7 +4,7 @@ const pjson = require('./package.json');
 
 function staticpage(page) {
     return function(req, res) {
-        res.render(page);
+        res.render(page, {version:pjson.version});
     }
 }
 
@@ -29,6 +29,7 @@ module.exports = function(app) {
     app.get('/api/endless/leaderboard', idk.getleaderboard);
     app.get('/api/endless/disqualify', idk.endlessdisqualify);
     app.get('/api/endless/notime', idk.endlesstime);
+    app.get('/api/endless/checkout', staticpage('checkout'));
 
     app.get('*', (req, res) => {
       res.status(404);
