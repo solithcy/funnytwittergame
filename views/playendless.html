@@ -366,7 +366,7 @@ $.ajax({
                           channel.addEventListener("message", e => {
                             console.log("hi");
                             if(e.data){
-                              if(e.error == "cancelled"){
+                              if(e.data.error == "cancelled"){
                                 return channel.close();
                               }
                               analytics.logEvent('purchase', {
