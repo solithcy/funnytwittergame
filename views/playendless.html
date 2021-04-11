@@ -377,6 +377,7 @@ $.ajax({
                                 if(document.hasFocus()){
                                   var anti = setInterval(function(){
                                     if(!document.hasFocus()){
+                                      clearInterval(anti);
                                       fetch("api/endless/disqualify", {headers: {authentification: game}})
                                         .then(data=>{
                                           $("#warning").text("your leaderboard place has been disqualified for going off the page");
@@ -581,6 +582,7 @@ $.ajax({
                 $(".play").fadeIn(0);
                 var anti = setInterval(function(){
                   if(!document.hasFocus()){
+                    clearInterval(anti);
                     fetch("api/endless/disqualify", {headers: {authentification: game}})
                       .then(data=>{
                         $("#warning").text("your leaderboard place has been disqualified for going off the page");
