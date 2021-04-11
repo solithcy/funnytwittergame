@@ -254,7 +254,7 @@ exports.cancellife = (req, res) => {
     const channel = new BroadcastChannel("whotweetedme");
     channel.postMessage({error:"cancelled"});
     window.close();
-  </script>`)
+  </script>`);
 }
 
 exports.endlessguess = (req, res) => {
