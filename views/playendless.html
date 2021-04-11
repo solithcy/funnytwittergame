@@ -151,7 +151,7 @@
 <div class="row" style="">
   <div class="centre funnycentre">
     <div class="loadingparent" style="height:100%;">
-      <p id="loadingstatus" class="">loading..</p>
+      <p id="loadingstatus" class=""></p>
     </div>
   </div>
   <div class="play one">
@@ -521,41 +521,39 @@ $.ajax({
 
       }, 500);
     }
+    $(".row").fadeOut(200);
     setTimeout(function(){
-      $(".row").fadeOut(500);
+      $("#loadingstatus").html(`∞ rounds.`);
+      $(".row").fadeIn(200);
       setTimeout(function(){
-        $("#loadingstatus").html(`∞ rounds.`);
-        $(".row").fadeIn(200);
+        $(".row").fadeOut(200);
         setTimeout(function(){
-          $(".row").fadeOut(200);
+          $("#loadingstatus").html(`a chance to get on the leaderboard.`);
+          $(".row").fadeIn(200);
           setTimeout(function(){
-            $("#loadingstatus").html(`a chance to get on the leaderboard.`);
-            $(".row").fadeIn(200);
+            $(".row").fadeOut(200);
             setTimeout(function(){
-              $(".row").fadeOut(200);
+              $("#loadingstatus").html(`let's go!`);
+              $(".row").fadeIn(200);
               setTimeout(function(){
-                $("#loadingstatus").html(`let's go!`);
-                $(".row").fadeIn(200);
-                setTimeout(function(){
-                  $(".row").fadeOut(200);
-                  $(".play").fadeIn(0);
-                  var anti = setInterval(function(){
-                    if(!document.hasFocus()){
-                      clearInterval(anti);
-                      fetch("api/endless/disqualify", {headers: {authentification: game}})
-                        .then(data=>{
-                          $("#warning").text("your leaderboard place has been disqualified for going off the page");
-                        });
-                    }
-                  }, 100);
-                  startgame();
-                }, 600);
-              }, 300);
-            }, 600);
-          }, 300);
-        }, 600);
-      }, 500);
-    }, 800);
+                $(".row").fadeOut(200);
+                $(".play").fadeIn(0);
+                var anti = setInterval(function(){
+                  if(!document.hasFocus()){
+                    clearInterval(anti);
+                    fetch("api/endless/disqualify", {headers: {authentification: game}})
+                      .then(data=>{
+                        $("#warning").text("your leaderboard place has been disqualified for going off the page");
+                      });
+                  }
+                }, 100);
+                startgame();
+              }, 600);
+            }, 300);
+          }, 600);
+        }, 300);
+      }, 600);
+    }, 300);
   });
 </script>
 <div class="menubox">
