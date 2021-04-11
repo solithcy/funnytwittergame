@@ -522,8 +522,9 @@ $.ajax({
       }, 500);
     }
     $("#loadingstatus").html(`∞ rounds.`);
-    $(".row").fadeIn(200);
     setTimeout(function(){
+      $(".row").fadeIn(200);
+      setTimeout(function(){
       $(".row").fadeOut(200);
       setTimeout(function(){
         $("#loadingstatus").html(`a chance to get on the leaderboard.`);
@@ -549,6 +550,7 @@ $.ajax({
             }, 600);
           }, 300);
         }, 600);
+      }, 300);
       }, 300);
     }, 600);
   });
