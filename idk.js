@@ -257,8 +257,8 @@ exports.endlessguess = (req, res) => {
         return;
       }
       db.serialize(function() {
-        db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
-
+        db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?) RETURNING id", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
+          console.log(data);
         });
       });
     }

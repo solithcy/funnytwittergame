@@ -301,7 +301,7 @@ $.ajax({
                 return thisshit;
               }
               function endgame(data){
-                if(data.lives!=0){
+                if(data.lives>0){
                   return startgame();
                 }
                 fetch("api/endless/leaderboard")
@@ -387,6 +387,7 @@ $.ajax({
                                     }
                                   }, 100);
                                   $("#warning").text("");
+                                  theround--;
                                   startgame();
                                 }
                               }, 500);
@@ -410,6 +411,9 @@ $.ajax({
                     }, 200);
                   });
                 }, 200);
+              }
+              if(data.lives==0){
+                return endgame();
               }
               $("#tweetimage").fadeIn(500);
               var stop = false;
