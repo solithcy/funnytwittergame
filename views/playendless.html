@@ -148,7 +148,7 @@
   }
 </style>
 
-<div class="row" style="">
+<div class="row" style="display:none;">
   <div class="centre funnycentre">
     <div class="loadingparent" style="height:100%;">
       <p id="loadingstatus" class=""></p>
@@ -521,7 +521,6 @@ $.ajax({
 
       }, 500);
     }
-    $(".row").fadeOut(0);
     $("#loadingstatus").html(`∞ rounds.`);
     $(".row").fadeIn(200);
     setTimeout(function(){
