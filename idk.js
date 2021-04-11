@@ -240,7 +240,7 @@ exports.endlesstime = (req, res) => {
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
   res.send({correct:false, score:req.session.endlessscore});
-  ifreq.session.endless.disqualified){
+  if(req.session.endless.disqualified){
     return;
   }
   var db = new sqlite3.Database('data.db');
