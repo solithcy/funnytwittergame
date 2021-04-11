@@ -227,6 +227,14 @@ exports.extralife = async (req, res) => {
   </script>`)
 }
 
+exports.cancellife = (req, res) => {
+  return res.send(`<script>
+    const channel = new BroadcastChannel("whotweetedme");
+    channel.postMessage({error:"cancelled"});
+    window.close();
+  </script>`)
+}
+
 exports.endlessguess = (req, res) => {
   var theid = req.headers.authentification;
   if(!(req.session.endless)){
