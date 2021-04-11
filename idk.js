@@ -261,6 +261,8 @@ exports.endlessguess = (req, res) => {
           console.log(data);
         });
       });
+    }else{
+      console.log(req.session.endless.lives);
     }
   }
 }
