@@ -2,7 +2,7 @@ const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
 const twitterlogin = require('login-with-twitter');
-const stripe = require('stripe')(config.stripe.test);
+const stripe = require('stripe')(config.stripe.live);
 var sqlite3 = require('sqlite3').verbose();
 const tw = new twitterlogin({
   consumerKey: config.loginauth.apikey,
