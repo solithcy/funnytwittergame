@@ -28,7 +28,6 @@ var catclient = new Twitter({
   access_token_secret: config.catauth.accesstokensecret
 });
 var games = {};
-var endlessgames = {};
 var tweets = [];
 var bidentweets = [];
 var cattweets = [];
@@ -123,7 +122,7 @@ exports.login = (req, res) => {
 exports.startgame = (req, res) => {
   var theid = uuidv4();
   if(req.query.endless){
-    endlessgames[theid] = {score:0, time:new Date().getTime()};
+    req.session.endless = {score:0, time:new Date().getTime()};
   }
   else{
     games[theid] = {};
@@ -151,14 +150,11 @@ exports.gettweets = (req, res) => {
 
 exports.gettweetsendless = (req, res) => {
   var theid = req.headers.authentification;
-  if(!theid){
-    return res.send({error:401, msg:"game_not_given"});
-  }
-  if(!(theid in endlessgames)){
+  if(!(req.session.endless)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
-  if(endlessgames[theid].currenttweets){
-    res.send({tweets:endlessgames[theid].currenttweets});
+  if(req.session.endless.currenttweets){
+    res.send({tweets:req.session.endless.currenttweets});
     return;
   }
   try{
@@ -168,7 +164,7 @@ exports.gettweetsendless = (req, res) => {
     return res.send({error:500, msg:"not_enough_tweets", amount:tweets.length, needed:30})
   }
   res.send({tweets:thetweets});
-  endlessgames[theid].currenttweets = thetweets;
+  req.session.endless.currenttweets = thetweets;
   function decodeHTMLEntities(text) {
       var entities = [
           ['amp', '&'],
@@ -192,42 +188,39 @@ exports.gettweetsendless = (req, res) => {
   }
   totype = totype.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
   setTimeout(function(){
-    if(!endlessgames[theid]){
+    if(req.session.endless){
       return;
     }
-    if(!endlessgames[theid].currenttweets){
+    if(!req.session.endless.currenttweets){
       return;
     }
-    if(endlessgames[theid].currenttweets[0].id_str==thetweets[0].id_str){
-      endlessgames[theid].disqualified=true;
+    if(req.session.endless.currenttweets[0].id_str==thetweets[0].id_str){
+      req.session.endless.disqualified=true;
     }
   }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
 }
 
 exports.endlessguess = (req, res) => {
   var theid = req.headers.authentification;
-  if(!theid){
-    return res.send({error:401, msg:"game_not_given"});
-  }
-  if(!(theid in endlessgames)){
+  if(!(req.session.endless)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
   if(!req.headers.tweetid){
     return res.send({error:401, msg:"tweet_not_given"});
   }
-  if(req.headers.tweetid == endlessgames[theid].currenttweets[0].id_str){
-    endlessgames[theid].score++;
-    delete endlessgames[theid].currenttweets;
-    return res.send({correct:true, score:endlessgames[theid].score});
+  if(req.headers.tweetid == req.session.endless.currenttweets[0].id_str){
+    req.session.endless.score++;
+    delete req.session.endless.currenttweets;
+    return res.send({correct:true, score:req.session.endless.score});
   }else{
-    res.send({correct:false, score:endlessgames[theid].score});
-    if(endlessgames[theid].disqualified){
+    res.send({correct:false, score:req.session.endless.score});
+    if(req.session.endless.disqualified){
       return;
     }
     var db = new sqlite3.Database('data.db');
     db.serialize(function() {
-      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
-        delete endlessgames[theid];
+      db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
+        req.session.endless.ended = true;
       });
     });
   }
@@ -235,32 +228,26 @@ exports.endlessguess = (req, res) => {
 
 exports.endlessdisqualify = (req, res) => {
   var theid = req.headers.authentification;
-  if(!theid){
-    return res.send({error:401, msg:"game_not_given"});
-  }
-  if(!(theid in endlessgames)){
+  if(!(req.session.endless)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
-  endlessgames[theid].disqualified=true;
+  req.session.endless.disqualified=true;
   return res.send({error:undefined});
 }
 
 exports.endlesstime = (req, res) => {
   var theid = req.headers.authentification;
-  if(!theid){
-    return res.send({error:401, msg:"game_not_given"});
-  }
-  if(!(theid in endlessgames)){
+  if(!(req.session.endless)){
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
-  res.send({correct:false, score:endlessgames[theid].score});
-  if(endlessgames[theid].disqualified){
+  res.send({correct:false, score:req.session.endlessscore});
+  ifreq.session.endless.disqualified){
     return;
   }
   var db = new sqlite3.Database('data.db');
   db.serialize(function() {
-    db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, endlessgames[theid].score, new Date().getTime()-endlessgames[theid].time], function(data){
-      delete endlessgames[theid];
+    db.run("INSERT INTO leaderboard(userid, username, score, time) VALUES (?, ?, ?, ?)", [req.session.user.userId, req.session.user.userName, req.session.endless.score, new Date().getTime()-req.session.endless.time], function(data){
+      req.session.endless.ended=true;
     });
   });
 }
