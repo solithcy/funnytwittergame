@@ -32,7 +32,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   store: new SQLiteStore,
-  cookie: { secure: true }
+  cookie: { secure: true, cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 * 4 } } // 4 weeks long cookie
 }))
 app.use('/static', express.static('static'));
 routes(app);
