@@ -76,7 +76,7 @@ exports.thankyou = (req, res) => {
 }
 
 exports.playendless = (req, res) => {
-  if(req.session.user){
+  if(!req.session.user){
     return res.render("playendless", {version:pjson.version});
   }
   return res.render("needslogin", {version:pjson.version});
@@ -122,7 +122,7 @@ exports.login = (req, res) => {
 exports.startgame = (req, res) => {
   var theid = uuidv4();
   if(req.query.endless){
-    req.session.endless = {score:0, time:new Date().getTime()};
+    req.session.endless = {score:0, time:new Date().getTime(), lives:1};
   }
   else{
     games[theid] = {};
@@ -154,7 +154,7 @@ exports.gettweetsendless = (req, res) => {
     return res.send({error:401, msg:"game_doesnt_exist"});
   }
   if(req.session.endless.currenttweets){
-    res.send({tweets:req.session.endless.currenttweets});
+    res.send({tweets:req.session.endless.currenttweets, lives:req.session.endless.lives});
     return;
   }
   try{
@@ -164,7 +164,7 @@ exports.gettweetsendless = (req, res) => {
     return res.send({error:500, msg:"not_enough_tweets", amount:tweets.length, needed:30})
   }
   req.session.endless.currenttweets = thetweets;
-  res.send({tweets:thetweets});
+  res.send({tweets:thetweets, lives:req.session.endless.lives});
   function decodeHTMLEntities(text) {
       var entities = [
           ['amp', '&'],

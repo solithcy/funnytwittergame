@@ -115,6 +115,23 @@
   .info #warning{
     font-size: 75%;
   }
+  .lives {
+    position: fixed;
+    user-select: none;
+    margin: auto;
+    top: 0;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    color: white;
+    z-index: 100;
+    font-size: 2vw;
+    right: 0;
+    width: 33.3%;
+    text-align: right;
+  }
+  .lives p{
+    margin: auto;
+  }
   @media only screen and (max-width: 750px) {
     .play{
       width: 50%;
@@ -136,6 +153,10 @@
       font-size: 3.5vw;
     }
     .info{
+      font-size: 6vw;
+      width: 50%;
+    }
+    .lives{
       font-size: 6vw;
       width: 50%;
     }
@@ -170,6 +191,9 @@
     <p id="timer"></p>
     <p id="round"></p>
     <p id="warning"></p>
+  </div>
+  <div class="lives">
+    <p id="lives"></p>
   </div>
 </div>
 
@@ -260,6 +284,7 @@ $.ajax({
             var thetweets = data.tweets;
             theround++;
             $("#round").text(`round ${theround}`);
+            $("#lives").text(`lives: ${data.lives}`);
             $(".centre").html(`
             <p>“<span id='thetweet'></span>”</p>
             <a id="tweetimageurl" href="" target="_blank"><img draggable="false" src="" id="tweetimage" alt=""></a>
@@ -306,6 +331,7 @@ $.ajax({
                           $(this).fadeOut(0);
                         });
                         $("#round").fadeOut(0);
+                        $("#lives").fadeOut(0);
                         $("#timer").fadeOut(0);
                         analytics.logEvent('game_end', {
                           id: game,
