@@ -312,7 +312,7 @@ $.ajax({
                           $(this).fadeOut(0);
                         });
                         $("#round").fadeOut(0);
-                        $("#lives").fadeOut(0);
+                        $("#lives").text("0 lives");
                         $("#timer").fadeOut(0);
                         analytics.logEvent('game_end', {
                           id: game,
