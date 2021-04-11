@@ -521,9 +521,9 @@ $.ajax({
 
       }, 500);
     }
-    $("#loadingstatus").html(`∞ rounds.`);
     $(".row").fadeOut(200);
     setTimeout(function(){
+      $("#loadingstatus").html(`∞ rounds.`);
       $(".row").fadeIn(200);
       setTimeout(function(){
         $(".row").fadeOut(200);
