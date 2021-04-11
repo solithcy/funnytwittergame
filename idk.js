@@ -2,6 +2,7 @@ const config = require('./config.json');
 const { v4: uuidv4 } = require('uuid');
 const pjson = require('./package.json');
 const twitterlogin = require('login-with-twitter');
+const stripe = require('stripe')(config.stripe.test);
 var sqlite3 = require('sqlite3').verbose();
 const tw = new twitterlogin({
   consumerKey: config.loginauth.apikey,
@@ -198,6 +199,32 @@ exports.gettweetsendless = (req, res) => {
       req.session.endless.disqualified=true;
     }
   }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
+}
+
+exports.extralife = (req, res) => {
+  if(!req.session.endless){
+    return res.send(`<script>
+      const channel = new BroadcastChannel("whotweetedme");
+      channel.postMessage({error:"game_doesnt_exist"});
+      window.close();
+    </script>`);
+  }
+  const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+  if(!session.customer){
+    return res.send(`<script>
+      const channel = new BroadcastChannel("whotweetedme");
+      channel.postMessage({error:"not_paid"});
+      window.close();
+    </script>`)
+  }
+  const customer = await stripe.customers.retrieve(session.customer);
+  req.session.endless.ended=false;
+  req.session.endless.lives++;
+  return res.send(`<script>
+    const channel = new BroadcastChannel("whotweetedme");
+    channel.postMessage({error:"paid"});
+    window.close();
+  </script>`)
 }
 
 exports.endlessguess = (req, res) => {

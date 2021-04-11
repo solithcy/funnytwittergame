@@ -340,6 +340,7 @@ $.ajax({
                             share on twitter
                           </a></p>
                           <p><a id="mainmenu">main menu</a></p>
+                          <p><a id="buylife">buy another life <span class="theat">(and support development)</span></a></p>
                           <p style="line-height: 110%;">leaderboard:<small>
                             <br>🥇 ${leaderboard[0].username}: ${leaderboard[0].score} <span class="theat">(in ${msToTime(leaderboard[0].time)})</span>
                             <br>🥈 ${leaderboard[1].username}: ${leaderboard[1].score} <span class="theat">(in ${msToTime(leaderboard[1].time)})</span>
@@ -351,6 +352,27 @@ $.ajax({
                           setTimeout(function(){
                             window.location.reload(0);
                           }, 200);
+                        });
+                        $("#buylife").click(function(){
+                          open("api/checkout?price=price_1If8LFHLJgqbSmeEwf2ZqH1O");
+                          const channel = new BroadcastChannel("whotweetedme");
+                          channel.addEventListener("message", e => {
+                            if(e.data){
+                              if(e.error){
+                                return;
+                              }
+                              analytics.logEvent('purchase', {
+                                currency: 'GBP',
+                                items: [{
+                                  item_id: 'extralife',
+                                  item_name: 'Extra Life',
+                                  price: 0.99
+                                }],
+                                value: 0.99
+                              });
+                              startgame();
+                            }
+                          });
                         });
                         $("#mainmenu").click(function(){
                           $("#mainmenu").unbind();
