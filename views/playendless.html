@@ -148,7 +148,7 @@
   }
 </style>
 
-<div class="row" style="display:none;">
+<div class="row" style="">
   <div class="centre funnycentre">
     <div class="loadingparent" style="height:100%;">
       <p id="loadingstatus" class=""></p>
@@ -522,35 +522,36 @@ $.ajax({
       }, 500);
     }
     $("#loadingstatus").html(`∞ rounds.`);
+    $(".row").fadeOut(200);
     setTimeout(function(){
       $(".row").fadeIn(200);
       setTimeout(function(){
-      $(".row").fadeOut(200);
-      setTimeout(function(){
-        $("#loadingstatus").html(`a chance to get on the leaderboard.`);
-        $(".row").fadeIn(200);
+        $(".row").fadeOut(200);
         setTimeout(function(){
-          $(".row").fadeOut(200);
+          $("#loadingstatus").html(`a chance to get on the leaderboard.`);
+          $(".row").fadeIn(200);
           setTimeout(function(){
-            $("#loadingstatus").html(`let's go!`);
-            $(".row").fadeIn(200);
+            $(".row").fadeOut(200);
             setTimeout(function(){
-              $(".row").fadeOut(200);
-              $(".play").fadeIn(0);
-              var anti = setInterval(function(){
-                if(!document.hasFocus()){
-                  clearInterval(anti);
-                  fetch("api/endless/disqualify", {headers: {authentification: game}})
-                    .then(data=>{
-                      $("#warning").text("your leaderboard place has been disqualified for going off the page");
-                    });
-                }
-              }, 100);
-              startgame();
-            }, 600);
-          }, 300);
-        }, 600);
-      }, 300);
+              $("#loadingstatus").html(`let's go!`);
+              $(".row").fadeIn(200);
+              setTimeout(function(){
+                $(".row").fadeOut(200);
+                $(".play").fadeIn(0);
+                var anti = setInterval(function(){
+                  if(!document.hasFocus()){
+                    clearInterval(anti);
+                    fetch("api/endless/disqualify", {headers: {authentification: game}})
+                      .then(data=>{
+                        $("#warning").text("your leaderboard place has been disqualified for going off the page");
+                      });
+                  }
+                }, 100);
+                startgame();
+              }, 600);
+            }, 300);
+          }, 600);
+        }, 300);
       }, 300);
     }, 600);
   });
