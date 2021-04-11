@@ -343,14 +343,17 @@ $.ajax({
                           <p><a href="https://twitter.com/intent/tweet?text=I%20just%20got%20${score}%20on%20https%3A//whotweeted.me%20in%20ENDLESS%20mode%21%20Can%20you%20beat%20my%20score%3F%20%23whotweetedmegame%20@whotweetedmegam">
                             share on twitter
                           </a></p>
-                          <p><a id="mainmenu">main menu</a></p>
-                          <p><a id="buylife">buy another life <span class="theat">(and support development)</span></a></p>
+                          <p><a class="click" id="mainmenu">main menu</a></p>
+                          <p><a class="click" id="buylife">buy another life <span class="theat">(and support development)</span></a></p>
                           <p style="line-height: 110%;">leaderboard:<small>
                             <br>🥇 ${leaderboard[0].username}: ${leaderboard[0].score} <span class="theat">(in ${msToTime(leaderboard[0].time)})</span>
                             <br>🥈 ${leaderboard[1].username}: ${leaderboard[1].score} <span class="theat">(in ${msToTime(leaderboard[1].time)})</span>
                             <br>🥉 ${leaderboard[2].username}: ${leaderboard[2].score} <span class="theat">(in ${msToTime(leaderboard[2].time)})</span>
                           </small></p>
                         `);
+                        $(".click").each(function(){
+                          $(this).unbind();
+                        });
                         $("#playagain").click(function(){
                           $(".row").fadeOut(200);
                           setTimeout(function(){
