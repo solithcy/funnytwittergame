@@ -122,6 +122,7 @@
         stripe.redirectToCheckout({
           lineItems: [{price: '${$( "#donationamount" ).val()}', quantity: 1}],
           mode: 'payment',
+          submitType: 'donate',
           successUrl: window.location.protocol + '//whotweeted.me/thankyou',
           cancelUrl: window.location.protocol + '//whotweeted.me/',
         })
