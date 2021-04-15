@@ -359,10 +359,10 @@ if(event.created_at){
     return console.error(event);
   }
   if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-    tweets.unshift(event);
     if(tweets.length>250){
       tweets.pop();
     }
+    tweets.unshift(event);
   }
 }else{
   // return console.log(event);
@@ -380,10 +380,10 @@ if(event.created_at){
     return console.error(event);
   }
   if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-    bidentweets.unshift(event);
     if(bidentweets.length>250){
       bidentweets.pop();
     }
+    bidentweets.unshift(event);
   }
 }else{
   // return console.log(event);
@@ -401,10 +401,10 @@ var catstream = catclient.stream('statuses/filter', {track: 'cat', language: 'en
       return console.error(event);
     }
     if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-      cattweets.unshift(event);
       if(cattweets.length>250){
         cattweets.pop();
       }
+      cattweets.unshift(event);
     }
   }else{
     // return console.log(event);
