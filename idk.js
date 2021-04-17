@@ -204,7 +204,7 @@ exports.gettweetsendless = (req, res) => {
   }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
 }
 
-exports.extralife = async (req, res) => {
+exports.extralife = (req, res) => {
   if(!req.session.endless){
     return res.send(`<script>
       const channel = new BroadcastChannel("whotweetedme");
@@ -238,7 +238,7 @@ exports.extralife = async (req, res) => {
   </script>`)
 }
 
-exports.lifecheckout = async (req, res) => {
+exports.lifecheckout = (req, res) => {
   const session = await stripe.checkout.sessions.create({
     success_url: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: 'https://whotweeted.me/api/endless/extra/cancelled',
