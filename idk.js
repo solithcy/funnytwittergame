@@ -212,34 +212,38 @@ exports.extralife = (req, res) => {
       window.close();
     </script>`);
   }
-  const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-  if(!session.customer){
-    return res.send(`<script>
-      const channel = new BroadcastChannel("whotweetedme");
-      channel.postMessage({error:"not_paid"});
-      window.close();
-    </script>`)
-  }
-  const customer = await stripe.customers.retrieve(session.customer);
-  req.session.endless.ended=false;
-  req.session.endless.lives++;
-  req.session.endless.disqualified=false;
-  if(req.session.endless.leaderboardid){
-    db.serialize(function() {
-      db.run("DELETE FROM leaderboard WHERE id = ?", [req.session.endless.leaderboardid], function(data){
-      });
-      delete req.session.endless.leaderboardid;
+  stripe.checkout.sessions.retrieve(req.query.session_id)
+  .then(session => {
+    if(!session.customer){
+      return res.send(`<script>
+        const channel = new BroadcastChannel("whotweetedme");
+        channel.postMessage({error:"not_paid"});
+        window.close();
+      </script>`)
+    }
+    stripe.customers.retrieve(session.customer)
+    .then(customer => {
+      req.session.endless.ended=false;
+      req.session.endless.lives++;
+      req.session.endless.disqualified=false;
+      if(req.session.endless.leaderboardid){
+        db.serialize(function() {
+          db.run("DELETE FROM leaderboard WHERE id = ?", [req.session.endless.leaderboardid], function(data){
+          });
+          delete req.session.endless.leaderboardid;
+        });
+      }
+      return res.send(`<script>
+        const channel = new BroadcastChannel("whotweetedme");
+        channel.postMessage({error:"paid"});
+        window.close();
+      </script>`);
     });
-  }
-  return res.send(`<script>
-    const channel = new BroadcastChannel("whotweetedme");
-    channel.postMessage({error:"paid"});
-    window.close();
-  </script>`)
+  });
 }
 
 exports.lifecheckout = (req, res) => {
-  const session = await stripe.checkout.sessions.create({
+  stripe.checkout.sessions.create({
     success_url: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: 'https://whotweeted.me/api/endless/extra/cancelled',
     payment_method_types: ['card'],
@@ -248,8 +252,10 @@ exports.lifecheckout = (req, res) => {
     ],
     mode: 'payment',
     allow_promotion_codes: true,
+  })
+  .then(session => {
+    return res.redirect(`/api/checkout?id=${session.id}`);
   });
-  return res.redirect(`/api/checkout?id=${session.id}`);
 }
 
 exports.cancellife = (req, res) => {
