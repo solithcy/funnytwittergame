@@ -204,7 +204,7 @@ exports.gettweetsendless = (req, res) => {
   }, ((35*decodeHTMLEntities(totype).length)+250)+17500);
 }
 
-exports.extralife = async (req, res) => {
+exports.extralife = (req, res) => {
   if(!req.session.endless){
     return res.send(`<script>
       const channel = new BroadcastChannel("whotweetedme");
@@ -212,34 +212,38 @@ exports.extralife = async (req, res) => {
       window.close();
     </script>`);
   }
-  const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
-  if(!session.customer){
-    return res.send(`<script>
-      const channel = new BroadcastChannel("whotweetedme");
-      channel.postMessage({error:"not_paid"});
-      window.close();
-    </script>`)
-  }
-  const customer = await stripe.customers.retrieve(session.customer);
-  req.session.endless.ended=false;
-  req.session.endless.lives++;
-  req.session.endless.disqualified=false;
-  if(req.session.endless.leaderboardid){
-    db.serialize(function() {
-      db.run("DELETE FROM leaderboard WHERE id = ?", [req.session.endless.leaderboardid], function(data){
-      });
-      delete req.session.endless.leaderboardid;
+  stripe.checkout.sessions.retrieve(req.query.session_id)
+  .then(session => {
+    if(!session.customer){
+      return res.send(`<script>
+        const channel = new BroadcastChannel("whotweetedme");
+        channel.postMessage({error:"not_paid"});
+        window.close();
+      </script>`)
+    }
+    stripe.customers.retrieve(session.customer)
+    .then(customer => {
+      req.session.endless.ended=false;
+      req.session.endless.lives++;
+      req.session.endless.disqualified=false;
+      if(req.session.endless.leaderboardid){
+        db.serialize(function() {
+          db.run("DELETE FROM leaderboard WHERE id = ?", [req.session.endless.leaderboardid], function(data){
+          });
+          delete req.session.endless.leaderboardid;
+        });
+      }
+      return res.send(`<script>
+        const channel = new BroadcastChannel("whotweetedme");
+        channel.postMessage({error:"paid"});
+        window.close();
+      </script>`);
     });
-  }
-  return res.send(`<script>
-    const channel = new BroadcastChannel("whotweetedme");
-    channel.postMessage({error:"paid"});
-    window.close();
-  </script>`)
+  });
 }
 
-exports.lifecheckout = async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
+exports.lifecheckout = (req, res) => {
+  stripe.checkout.sessions.create({
     success_url: 'https://whotweeted.me/api/endless/extra?session_id={CHECKOUT_SESSION_ID}',
     cancel_url: 'https://whotweeted.me/api/endless/extra/cancelled',
     payment_method_types: ['card'],
@@ -248,8 +252,10 @@ exports.lifecheckout = async (req, res) => {
     ],
     mode: 'payment',
     allow_promotion_codes: true,
+  })
+  .then(session => {
+    return res.redirect(`/api/checkout?id=${session.id}`);
   });
-  return res.redirect(`/api/checkout?id=${session.id}`);
 }
 
 exports.cancellife = (req, res) => {
@@ -359,10 +365,10 @@ if(event.created_at){
     return console.error(event);
   }
   if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-    tweets.unshift(event);
     if(tweets.length>250){
       tweets.pop();
     }
+    tweets.unshift(event);
   }
 }else{
   // return console.log(event);
@@ -380,10 +386,10 @@ if(event.created_at){
     return console.error(event);
   }
   if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-    bidentweets.unshift(event);
     if(bidentweets.length>250){
       bidentweets.pop();
     }
+    bidentweets.unshift(event);
   }
 }else{
   // return console.log(event);
@@ -401,10 +407,10 @@ var catstream = catclient.stream('statuses/filter', {track: 'cat', language: 'en
       return console.error(event);
     }
     if(!event.retweeted_status && !event.quoted_status && !event.in_reply_to_user_id && !event.possibly_sensitive){
-      cattweets.unshift(event);
       if(cattweets.length>250){
         cattweets.pop();
       }
+      cattweets.unshift(event);
     }
   }else{
     // return console.log(event);
